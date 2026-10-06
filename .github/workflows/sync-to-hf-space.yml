@@ -1,0 +1,41 @@
+# A placer dans votre depot GitHub sous : .github/workflows/sync-to-hf-space.yml
+#
+# Synchronise automatiquement le dossier hf_space/ de votre depot GitHub
+# vers le depot git du Space Hugging Face, a chaque push sur main qui
+# touche ce dossier.
+
+name: Synchroniser vers Hugging Face Space
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "hf_space/**"
+  workflow_dispatch:  # permet aussi un declenchement manuel depuis l'onglet Actions
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le depot GitHub
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Pousser vers le Space Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          HF_SPACE_URL="https://FOFANA1990:${HF_TOKEN}@huggingface.co/spaces/FOFANA1990/cv-extractor-qwen"
+
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
+          git clone "$HF_SPACE_URL" /tmp/hf_space_clone
+
+          rsync -av --delete --exclude='.git' hf_space/ /tmp/hf_space_clone/
+
+          cd /tmp/hf_space_clone
+          git add -A
+          git diff --staged --quiet || git commit -m "Sync automatique depuis GitHub (${{ github.sha }})"
+          git push

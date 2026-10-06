@@ -18,8 +18,11 @@ import gradio as gr
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 
-MODEL_REPO = "Qwen/Qwen2.5-7B-Instruct-GGUF"
-MODEL_FILE = "qwen2.5-7b-instruct-q4_k_m.gguf"  # quantification Q4_K_M : qualité/mémoire équilibrées (~4.4 Go)
+MODEL_REPO = "bartowski/Qwen2.5-7B-Instruct-GGUF"
+MODEL_FILE = "Qwen2.5-7B-Instruct-Q4_K_M.gguf"  # quantification Q4_K_M : qualité/mémoire équilibrées (~4.4 Go)
+# Remarque : le dépôt officiel Qwen/Qwen2.5-7B-Instruct-GGUF scinde ce
+# fichier en deux parties (...-00001-of-00002.gguf / -00002...) ; ce
+# mirroir bartowski (très utilisé, fiable) le fournit en un seul fichier.
 
 # Clé partagée optionnelle : définissez le secret EXTRACTION_API_KEY dans
 # Settings > Repository secrets du Space pour exiger une clé à chaque

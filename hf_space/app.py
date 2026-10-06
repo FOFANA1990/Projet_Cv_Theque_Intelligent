@@ -52,9 +52,14 @@ print("Chargement du modèle en mémoire (peut prendre une minute)...")
 llm = Llama(
     model_path=model_path,
     n_ctx=8192,
-    n_threads=os.cpu_count(),  # utilise tous les coeurs CPU reellement disponibles
-                               # (2 etait une hypothese fausse : le Space tourne
-                               # en pratique sur du materiel ZeroGPU, pas CPU Basic)
+    # os.cpu_count() renvoie souvent le nombre de coeurs de la machine HOTE
+    # partagee (environnement conteneurise type Hugging Face Spaces), pas le
+    # quota reellement alloue a ce Space -> demander trop de threads cree de
+    # la contention et RALENTIT l'inference au lieu de l'accelerer (constate :
+    # 1345s avec n_threads=2, puis 2567s -- deux fois plus lent -- avec
+    # n_threads=os.cpu_count()). On plafonne volontairement a une valeur
+    # modeste et fixe plutot que de faire confiance a la detection automatique.
+    n_threads=4,
     verbose=False,
 )
 print("Modèle chargé — Space prêt.")

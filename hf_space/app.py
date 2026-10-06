@@ -52,7 +52,9 @@ print("Chargement du modèle en mémoire (peut prendre une minute)...")
 llm = Llama(
     model_path=model_path,
     n_ctx=8192,
-    n_threads=2,       # aligné sur les 2 vCPU du plan CPU Basic gratuit
+    n_threads=os.cpu_count(),  # utilise tous les coeurs CPU reellement disponibles
+                               # (2 etait une hypothese fausse : le Space tourne
+                               # en pratique sur du materiel ZeroGPU, pas CPU Basic)
     verbose=False,
 )
 print("Modèle chargé — Space prêt.")
@@ -110,7 +112,8 @@ def extraire(raw_text: str, api_key: str) -> str:
             ],
             response_format={"type": "json_object"},
             temperature=0,
-            max_tokens=2048,
+            max_tokens=1200,  # largement suffisant pour le schema JSON attendu ;
+                              # borne le pire des cas en temps de generation
         )
         return response["choices"][0]["message"]["content"]
     except Exception as exc:

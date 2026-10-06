@@ -18,6 +18,22 @@ import gradio as gr
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 
+# --- Compatibilité ZeroGPU ---
+# Hugging Face exige qu'au moins une fonction soit décorée @spaces.GPU au
+# démarrage d'un Space Gradio (sans quoi : "No @spaces.GPU function detected
+# during startup"), y compris quand le matériel réel est CPU Basic. Cette
+# application n'a jamais besoin de GPU (llama-cpp-python tourne en CPU pur) :
+# la fonction ci-dessous ne fait rien, elle sert uniquement à satisfaire
+# cette vérification de démarrage.
+try:
+    import spaces
+
+    @spaces.GPU
+    def _zerogpu_noop() -> None:
+        return None
+except Exception:
+    pass  # exécution locale ou environnement sans le paquet "spaces" : sans impact
+
 MODEL_REPO = "bartowski/Qwen2.5-7B-Instruct-GGUF"
 MODEL_FILE = "Qwen2.5-7B-Instruct-Q4_K_M.gguf"  # quantification Q4_K_M : qualité/mémoire équilibrées (~4.4 Go)
 # Remarque : le dépôt officiel Qwen/Qwen2.5-7B-Instruct-GGUF scinde ce

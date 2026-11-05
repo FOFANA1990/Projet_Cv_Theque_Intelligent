@@ -20,8 +20,19 @@ class Settings(BaseSettings):
         default="postgresql+psycopg2://postgres:postgres@localhost:5432/cv_theque"
     )
 
+    # --- Extraction du CV via le Space Hugging Face (Qwen2.5-7B-Instruct) ---
+    # HF_SPACE_URL     : "utilisateur/nom-du-space" (ex. FOFANA1990/cv-extractor-qwen)
+    # HF_SPACE_API_KEY : même valeur que le secret EXTRACTION_API_KEY du Space
+    # HF_TOKEN         : token Hugging Face en lecture (utile si le Space est privé)
+    HF_SPACE_URL: str = Field(default="")
+    HF_SPACE_API_KEY: str = Field(default="")
+    HF_TOKEN: str = Field(default="")
+
+    # --- Ollama (encore utilisé par le matching / scoring) ---
     OLLAMA_HOST: str = Field(default="http://localhost:11434")
     OLLAMA_MODEL: str = Field(default="qwen2.5:7b-instruct")
+    OLLAMA_AUTH_USER: str = Field(default="")
+    OLLAMA_AUTH_PASSWORD: str = Field(default="")
     OLLAMA_NUM_CTX: int = Field(default=8192)
     OLLAMA_SCORING_MODEL: str = Field(default="qwen2.5:3b-instruct")
     MATCHING_CONCURRENCY: int = Field(default=3)
@@ -31,15 +42,6 @@ class Settings(BaseSettings):
     TESSERACT_CMD: str | None = Field(default=None)
 
     ADMIN_API_KEY: str = Field(default="changez-moi-en-dev")
-
-    # --- Intégration France Travail (recherche de missions externes) ---
-    # Inscription gratuite sur https://francetravail.io -> créer une
-    # application -> souscrire à l'API "Offres d'emploi v2" -> récupérer
-    # Identifiant client / Clé secrète ci-dessous. Laissé vide par défaut :
-    # la fonctionnalité de recherche externe est alors désactivée
-    # proprement (message d'erreur clair) plutôt que de planter.
-    FRANCE_TRAVAIL_CLIENT_ID: str = Field(default="")
-    FRANCE_TRAVAIL_CLIENT_SECRET: str = Field(default="")
 
     UPLOAD_TMP_DIR: str = Field(default="./tmp_uploads")
     MAX_UPLOAD_SIZE_MB: int = Field(default=10)
@@ -58,9 +60,8 @@ class Settings(BaseSettings):
     # --- API France Travail (recherche d'offres d'emploi externes) ---
     # Inscription gratuite sur https://francetravail.io -> créer une
     # application -> souscrire à l'API "Offres d'emploi v2" -> récupérer
-    # Client ID / Client Secret ci-dessous. Sans ces identifiants, la
-    # recherche d'offres externes est simplement désactivée (message clair
-    # renvoyé côté admin), le reste de l'application n'est pas impacté.
+    # Client ID / Client Secret. Sans ces identifiants, la recherche
+    # d'offres externes est désactivée proprement (message clair côté admin).
     FRANCE_TRAVAIL_CLIENT_ID: str = Field(default="")
     FRANCE_TRAVAIL_CLIENT_SECRET: str = Field(default="")
     FRANCE_TRAVAIL_SCOPE: str = Field(default="api_offresdemploiv2 o2dsoffre")

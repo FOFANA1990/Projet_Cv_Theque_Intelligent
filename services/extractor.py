@@ -1,102 +1,120 @@
 """
 services/extractor.py
 ----------------------
-Pipeline d'extraction structurée des informations d'un CV, en s'appuyant sur
-un LLM local servi par Ollama (par défaut : Qwen2.5 7B Instruct).
+Pipeline d'extraction structurée des informations d'un CV, en s'appuyant
+sur Qwen2.5-7B-Instruct hébergé sur un Space Hugging Face (SDK Gradio),
+appelé via gradio_client.
 
-Pourquoi Ollama plutôt que `transformers`/`torch` en direct :
-- Inférence CPU nettement plus rapide (backend llama.cpp optimisé + modèles
-  quantifiés), là où `transformers` en float32 pur peut prendre plusieurs
-  minutes pour un seul CV sur une machine sans GPU.
-- Mode JSON natif (`format="json"`) qui garantit une sortie syntaxiquement
-  valide, ce qui élimine toute une classe de bugs de parsing.
-- 100% local : Ollama tourne sur la machine (ou le serveur) de l'entreprise,
-  aucune donnée candidat ne transite vers un service tiers -> conforme RGPD.
+Architecture :
+    Render (ce backend) --gradio_client--> HF Space (modèle Qwen2.5)
 
-Prérequis : Ollama doit être installé et lancé localement (ollama.com), et
-le modèle configuré (`OLLAMA_MODEL` dans .env) doit avoir été téléchargé au
-préalable avec `ollama pull <modele>`.
+Remplace l'ancienne version qui appelait un serveur Ollama. Le schéma de
+sortie, les règles d'extraction et la fonction publique `extract_cv_info`
+restent identiques — seul le mécanisme d'appel change, aucun autre fichier
+du projet n'a besoin d'être modifié.
+
+Configuration requise (config.py / variables d'environnement Render) :
+    HF_SPACE_URL      ex. "FOFANA1990/cv-extractor-qwen"
+    HF_SPACE_API_KEY  même valeur que le secret EXTRACTION_API_KEY du Space
+    HF_TOKEN          token Hugging Face en LECTURE (obligatoire si le Space
+                      est privé, ce qui est le cas ici)
 """
 
 import json
 import logging
+import time
 
-import ollama
+from gradio_client import Client
 
 from config import settings
 from schemas import CandidateCVData
 
 logger = logging.getLogger(__name__)
 
+# Gradio 6.x nomme l'endpoint d'après la fonction Python : `def extraire(...)`
+# dans hf_space/app.py  ->  "/extraire"  (et non "/predict" comme avant).
+API_NAME = "/extraire"
+
+# Un Space gratuit s'endort après 48 h d'inactivité : au réveil, il doit
+# recharger le modèle, ce qui prend un peu de temps. On réessaie donc la
+# connexion plusieurs fois avant d'abandonner.
+CONNECT_ATTEMPTS = 6
+CONNECT_DELAY_SECONDS = 30
+
 
 class ExtractionError(Exception):
     """Levée quand le pipeline LLM échoue à produire une extraction exploitable."""
 
 
-# ---------------------------------------------------------------------------
-# Instructions système : décrit le schéma cible et les règles d'extraction.
-# Le mode JSON d'Ollama garantit une syntaxe valide, mais pas le respect
-# exact du schéma ni la qualité du contenu -> on est explicite sur les deux.
-# ---------------------------------------------------------------------------
-_SYSTEM_PROMPT = """Tu es un assistant spécialisé dans l'extraction d'informations structurées à partir de CV (curriculum vitae).
-
-Analyse le texte du CV fourni par l'utilisateur et extrait UNIQUEMENT les informations qui y sont explicitement présentes. N'invente rien et ne duplique jamais une information.
-
-Réponds STRICTEMENT avec un objet JSON respectant exactement ce schéma (aucun champ supplémentaire, aucun texte en dehors du JSON) :
-
-{
-  "nom": "string",
-  "prenom": "string",
-  "email": "string",
-  "telephone": "string",
-  "poste_vise": "string",
-  "competences": ["string", "..."],
-  "experiences": [
-    {"poste": "string", "entreprise": "string", "periode": "string", "description": "string"}
-  ],
-  "formations": [
-    {"diplome": "string", "etablissement": "string", "annee": "string"}
-  ],
-  "langues": ["string", "..."],
-  "centres_interet": ["string", "..."]
-}
-
-Règles importantes :
-- Chaque expérience professionnelle distincte du CV doit apparaître UNE SEULE FOIS dans "experiences", avec son propre poste/entreprise/periode/description. Ne répète jamais la même expérience plusieurs fois.
-- Chaque formation distincte doit apparaître UNE SEULE FOIS dans "formations".
-- "poste_vise" correspond à l'intitulé du poste recherché par le candidat (souvent en haut du CV), pas à un poste occupé dans le passé.
-- Si une information n'est pas présente dans le texte, laisse le champ vide ("" pour une chaîne, [] pour une liste) plutôt que d'inventer une valeur.
-"""
+_client: Client | None = None
 
 
-def _call_ollama(raw_text: str) -> str:
-    """Appelle le modèle via Ollama et retourne le contenu brut de sa réponse."""
+def _get_client() -> Client:
+    """
+    Construit (une seule fois) le client vers le Space, avec nouvelles
+    tentatives si le Space est en cours de réveil.
+    """
+    global _client
+    if _client is not None:
+        return _client
+
+    if not settings.HF_SPACE_URL:
+        raise ExtractionError(
+            "HF_SPACE_URL n'est pas configuré (ex. 'FOFANA1990/cv-extractor-qwen') : "
+            "ajoutez cette variable d'environnement sur Render."
+        )
+
+    last_exc: Exception | None = None
+    for attempt in range(1, CONNECT_ATTEMPTS + 1):
+        try:
+            _client = Client(
+                settings.HF_SPACE_URL,
+                token=settings.HF_TOKEN or None,
+                verbose=False,
+            )
+            return _client
+        except Exception as exc:
+            last_exc = exc
+            logger.warning(
+                "Connexion au Space '%s' impossible (tentative %d/%d) : %s",
+                settings.HF_SPACE_URL, attempt, CONNECT_ATTEMPTS, exc,
+            )
+            if attempt < CONNECT_ATTEMPTS:
+                time.sleep(CONNECT_DELAY_SECONDS)
+
+    raise ExtractionError(
+        f"Impossible de se connecter au Space Hugging Face '{settings.HF_SPACE_URL}' "
+        f"après {CONNECT_ATTEMPTS} tentatives. Vérifiez : le Space est-il démarré (pas en "
+        f"erreur) ? HF_SPACE_URL est-il correct ? Le Space est privé : HF_TOKEN est-il "
+        f"défini avec un token valide ? Dernière erreur : {last_exc}"
+    ) from last_exc
+
+
+def _call_space(raw_text: str) -> str:
+    """Appelle le Space et retourne le contenu brut de sa réponse (JSON en chaîne)."""
+    global _client
+
     truncated_text = raw_text[: settings.MAX_INPUT_CHARS]
-
-    client = ollama.Client(host=settings.OLLAMA_HOST)
+    client = _get_client()
 
     try:
-        response = client.chat(
-            model=settings.OLLAMA_MODEL,
-            messages=[
-                {"role": "system", "content": _SYSTEM_PROMPT},
-                {"role": "user", "content": truncated_text},
-            ],
-            format="json",  # garantit une sortie JSON syntaxiquement valide
-            options={"temperature": 0},  # extraction déterministe, pas de créativité
+        result = client.predict(
+            truncated_text,
+            settings.HF_SPACE_API_KEY,
+            api_name=API_NAME,
         )
     except Exception as exc:
+        # On oublie le client en cache : si le Space a redémarré entre-temps,
+        # le prochain appel repartira sur une connexion neuve.
+        _client = None
         raise ExtractionError(
-            f"Échec de l'appel au modèle Ollama '{settings.OLLAMA_MODEL}' "
-            f"(vérifiez qu'Ollama est bien lancé sur {settings.OLLAMA_HOST} "
-            f"et que le modèle a été téléchargé avec 'ollama pull {settings.OLLAMA_MODEL}') : {exc}"
+            f"Échec de l'appel au Space Hugging Face '{settings.HF_SPACE_URL}' : {exc}"
         ) from exc
 
-    content = response.get("message", {}).get("content", "")
-    if not content.strip():
-        raise ExtractionError("Le modèle a renvoyé une réponse vide.")
+    if not result or not str(result).strip():
+        raise ExtractionError("Le Space a renvoyé une réponse vide.")
 
-    return content
+    return result
 
 
 def extract_cv_info(raw_text: str) -> CandidateCVData:
@@ -111,27 +129,26 @@ def extract_cv_info(raw_text: str) -> CandidateCVData:
         Une instance validée de `CandidateCVData`.
 
     Raises:
-        ExtractionError: si l'appel au modèle ou le parsing/la validation échoue.
+        ExtractionError: si l'appel au Space ou le parsing/la validation échoue.
     """
     if not raw_text.strip():
         raise ExtractionError("Texte source vide : rien à extraire.")
 
-    content = _call_ollama(raw_text)
+    content = _call_space(raw_text)
 
     try:
         parsed_json = json.loads(content)
     except json.JSONDecodeError as exc:
-        # Ne devrait normalement pas arriver grâce au mode JSON natif d'Ollama,
-        # mais on journalise un extrait pour pouvoir diagnostiquer si besoin.
-        preview = content[:500].replace("\n", "\\n")
-        logger.error("Réponse du modèle non-JSON malgré le mode JSON (extrait) : %s", preview)
-        raise ExtractionError(
-            f"La réponse du modèle n'est pas un JSON valide : {exc}"
-        ) from exc
+        preview = str(content)[:500].replace("\n", "\\n")
+        logger.error("Réponse du Space non-JSON (extrait) : %s", preview)
+        raise ExtractionError(f"La réponse du Space n'est pas un JSON valide : {exc}") from exc
+
+    if isinstance(parsed_json, dict) and "error" in parsed_json:
+        raise ExtractionError(f"Le Space a renvoyé une erreur : {parsed_json['error']}")
 
     try:
         return CandidateCVData.model_validate(parsed_json)
     except Exception as exc:
         raise ExtractionError(
-            f"La sortie du modèle ne respecte pas le schéma attendu : {exc}"
+            f"La sortie du Space ne respecte pas le schéma attendu : {exc}"
         ) from exc

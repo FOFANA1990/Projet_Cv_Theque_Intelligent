@@ -132,9 +132,21 @@ def _human_readable_size(size_bytes: int) -> str:
     return f"{size:.1f} TB"
 
 
-@app.get("/", tags=["Santé"])
-def read_root() -> dict:
-    return {"status": "ok", "service": settings.APP_NAME}
+# @app.get("/", tags=["Santé"])
+# def read_root() -> dict:
+#     return {"status": "ok", "service": settings.APP_NAME}
+# Monter le répertoire public pour servir des fichiers statiques
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
+app.mount("/static", StaticFiles(directory="public"), name="public")
+
+# Route pour renvoyer la page HTML
+@app.get("/", response_class=HTMLResponse)
+async def read_index():
+    with open("public/index.html") as f:
+        return HTMLResponse(content=f.read())
+    
 
 
 @app.get("/api/v1/health", tags=["Santé"])

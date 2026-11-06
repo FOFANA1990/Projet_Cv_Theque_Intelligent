@@ -665,7 +665,7 @@ $$(".apply").forEach(function(b){
 $("#posteClear").addEventListener("click",function(){ poste=""; $("#posteChip").classList.remove("show"); });
 
 /* Envoi → dépôt direct vers l'API backend (extraction IA + stockage CVthèque) */
-var API_BASE = "http://localhost:8000"; // TODO: adapter à l'URL du backend en production
+   var API_BASE = "https://projet-cv-theque-intelligent.onrender.com"; // TODO: adapter à l'URL du backend en production
 var sendBtn = $("#sendCv");
 var cvStatus = $("#cvStatus");
 var currentUploadRequest = null;

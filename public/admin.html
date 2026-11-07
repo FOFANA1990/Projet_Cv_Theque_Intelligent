@@ -128,7 +128,7 @@
 </main>
 
 <script>
-var API_BASE = "https://projet-cv-theque-intelligent.onrender.com";
+var API_BASE = window.location.origin;
 var $ = function(sel, ctx){ return (ctx||document).querySelector(sel); };
 var $$ = function(sel, ctx){ return Array.prototype.slice.call((ctx||document).querySelectorAll(sel)); };
 

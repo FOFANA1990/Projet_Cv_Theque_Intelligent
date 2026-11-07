@@ -23,7 +23,7 @@ from fastapi import (
     status,
 )
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session, selectinload
 
 from config import settings
@@ -80,6 +80,9 @@ app = FastAPI(
     version="1.0.0",
     description="API backend de gestion de candidatures : extraction IA locale des CV, matching et stockage PostgreSQL.",
     default_response_class=UTF8JSONResponse,
+    docs_url=None,
+    redoc_url=None,
+    openapi_url=None,
 )
 
 app.add_middleware(
@@ -132,21 +135,30 @@ def _human_readable_size(size_bytes: int) -> str:
     return f"{size:.1f} TB"
 
 
-# @app.get("/", tags=["Santé"])
-# def read_root() -> dict:
-#     return {"status": "ok", "service": settings.APP_NAME}
-# Monter le répertoire public pour servir des fichiers statiques
+# --- Pages web (URL propres, sans "/static" ni ".html") -------------------
 
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
-app.mount("/static", StaticFiles(directory="public"), name="public")
+def _page(nom: str) -> FileResponse:
+    return FileResponse(Path("public") / nom, media_type="text/html; charset=utf-8")
 
-# Route pour renvoyer la page HTML
-@app.get("/", response_class=HTMLResponse)
-async def read_index():
-    with open("public/index.html") as f:
-        return HTMLResponse(content=f.read())
-    
+
+@app.get("/", include_in_schema=False)
+def racine():
+    return RedirectResponse(url="/cv")
+
+
+@app.get("/cv", include_in_schema=False)
+def page_cv():
+    return _page("wizecrew_1.html")        # dépôt de CV (candidats)
+
+
+@app.get("/missions", include_in_schema=False)
+def page_missions():
+    return _page("wizesource_1.html")      # formulaire recruteur
+
+
+@app.get("/admin", include_in_schema=False)
+def page_admin():
+    return _page("admin.html")             # back-office
 
 
 @app.get("/api/v1/health", tags=["Santé"])

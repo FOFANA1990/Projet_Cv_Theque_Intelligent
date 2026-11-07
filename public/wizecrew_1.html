@@ -287,8 +287,8 @@ footer{padding-bottom:88px}
     <nav class="main" aria-label="Navigation principale">
       <a class="lnk" href="#postes">Profils recherchés</a>
       <a class="lnk" href="#methode">Comment ça marche</a>
-      <a class="lnk" href="wizeport.html">WizePort</a>
-      <a class="back" href="wizetech.html">← WizeTech</a>
+      <a class="lnk" href="#">WizePort</a>
+      <a class="back" href="#">← WizeTech</a>
       <a class="btn c" href="#cv">Déposer mon CV</a>
     </nav>
     <button id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobmenu"><span></span><span></span><span></span></button>
@@ -298,8 +298,8 @@ footer{padding-bottom:88px}
   <a href="#postes">Profils recherchés</a>
   <a href="#cv">Déposer mon CV</a>
   <a href="#methode">Comment ça marche</a>
-  <a href="wizeport.html">WizePort</a>
-  <a class="bk" href="wizetech.html">← Retour sur WizeTech</a>
+  <a href="#">WizePort</a>
+  <a class="bk" href="#">← Retour sur WizeTech</a>
 </div>
 
 <main id="main">
@@ -473,7 +473,7 @@ footer{padding-bottom:88px}
         <h3>Déjà vos missions ? Passez par WizePort.</h3>
         <p>WizePort vous salarie et porte contrat, facturation, paie et administratif — simulateur de revenus en ligne.</p>
       </div>
-      <a class="btn s" href="wizeport.html">Découvrir WizePort <span class="ar">→</span></a>
+      <a class="btn s" href="#">Découvrir WizePort <span class="ar">→</span></a>
     </div>
   </div>
 </section>
@@ -497,7 +497,7 @@ footer{padding-bottom:88px}
       </div>
       <div>
         <p style="font-family:var(--pm);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;color:var(--ink50)">Écosystème</p>
-        <p><a href="wizetech.html">WizeTech — la maison mère</a><br><a href="wizeport.html">WizePort — portage salarial</a><br><a href="wizesource.html">WizeSource — entreprises &amp; sourcing</a><br><a href="mailto:contact@wizetech.lu">contact@wizetech.lu</a></p>
+        <p><a href="#">WizeTech — la maison mère</a><br><a href="#">WizePort — portage salarial</a><br><a href="/missions">WizeSource — entreprises &amp; sourcing</a><br><a href="mailto:contact@wizetech.lu">contact@wizetech.lu</a></p>
       </div>
     </div>
     <div class="legal">
@@ -665,7 +665,7 @@ $$(".apply").forEach(function(b){
 $("#posteClear").addEventListener("click",function(){ poste=""; $("#posteChip").classList.remove("show"); });
 
 /* Envoi → dépôt direct vers l'API backend (extraction IA + stockage CVthèque) */
-   var API_BASE = "https://projet-cv-theque-intelligent.onrender.com"; // TODO: adapter à l'URL du backend en production
+   var API_BASE = window.location.origin;
 var sendBtn = $("#sendCv");
 var cvStatus = $("#cvStatus");
 var currentUploadRequest = null;
@@ -760,7 +760,5 @@ $$("dialog").forEach(function(d){
 });
 })();
 </script>
-</body>
-</html>
 </body>
 </html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Back-office - Missions & Matching</title>
+<style>
+  :root{
+    --ink:#0F172A; --ink-2:#5B6472; --line:rgba(15,23,42,.12);
+    --paper:#FBFAF7; --panel:#FFFFFF;
+    --navy:#12324A; --navy-2:#1985A1;
+    --mint:#06C89A; --amber:#C98A2E; --clay:#B3452E;
+    --mono: "IBM Plex Mono","SF Mono",Consolas,monospace;
+    --sans: "IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+  a{color:inherit}
+
+  header{border-bottom:1px solid var(--line);background:var(--panel);padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  header h1{font-size:1.05rem;margin:0;font-weight:600;letter-spacing:-.01em}
+  header .sub{font-family:var(--mono);font-size:.72rem;color:var(--ink-2)}
+
+  .key-box{display:flex;align-items:center;gap:8px}
+  .key-box input{font-family:var(--mono);font-size:.8rem;padding:7px 10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);width:220px}
+  .key-box button{font-family:var(--mono);font-size:.75rem;padding:7px 12px;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer}
+  .key-status{font-family:var(--mono);font-size:.72rem}
+  .key-status.ok{color:var(--mint)}
+  .key-status.err{color:var(--clay)}
+
+  main{max-width:980px;margin:0 auto;padding:32px 24px 80px}
+
+  .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:22px;flex-wrap:wrap}
+  .toolbar input[type="text"]{flex:1;min-width:220px;padding:10px 12px;border:1px solid var(--line);background:var(--panel);font-family:var(--sans);font-size:.92rem}
+  .toolbar input[type="text"]:focus{outline:2px solid var(--navy-2);outline-offset:-1px}
+  .btn{font-family:var(--sans);font-size:.85rem;font-weight:600;padding:10px 16px;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer;white-space:nowrap}
+  .btn:hover{background:var(--navy-2);border-color:var(--navy-2)}
+  .btn.ghost{background:transparent;color:var(--navy);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--navy);background:rgba(18,50,74,.05)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+
+  #globalStatus{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);margin-bottom:16px;display:none}
+  #globalStatus.show{display:block}
+  #globalStatus.err{color:var(--clay)}
+
+  .mission-list{display:flex;flex-direction:column;gap:12px}
+  .mission-card{background:var(--panel);border:1px solid var(--line)}
+  .mission-head{padding:16px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+  .mission-main h3{margin:0 0 4px;font-size:1rem;font-weight:600}
+  .mission-main .meta{font-family:var(--mono);font-size:.74rem;color:var(--ink-2)}
+  .mission-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+  .status-pill{font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;padding:4px 9px;border-radius:2px;white-space:nowrap}
+  .status-pill.en_attente{background:rgba(15,23,42,.08);color:var(--ink-2)}
+  .status-pill.en_cours{background:rgba(25,133,161,.14);color:var(--navy-2)}
+  .status-pill.terminee{background:rgba(6,200,154,.16);color:#03795D}
+  .status-pill.echec{background:rgba(179,69,46,.14);color:var(--clay)}
+
+  .mission-results{border-top:1px solid var(--line);padding:14px 18px;display:none;background:#FAFAF8}
+  .mission-results.show{display:block}
+  .mission-results .rstatus{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);margin-bottom:10px}
+  .rstatus.err{color:var(--clay)}
+
+  .candidate-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .candidate-row:last-child{border-bottom:none}
+  .candidate-main h4{margin:0 0 2px;font-size:.92rem;font-weight:600}
+  .candidate-main .poste{font-family:var(--mono);font-size:.7rem;color:var(--ink-2);text-transform:uppercase;letter-spacing:.05em}
+  .candidate-main .contact{font-size:.82rem;color:var(--ink-2);margin-top:4px}
+  .candidate-main .contact a{color:var(--navy-2);text-decoration:none}
+  .candidate-main .justif{font-size:.82rem;color:var(--ink-2);font-style:italic;margin-top:4px}
+  .candidate-main .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+  .candidate-main .tags span{background:#fff;border:1px solid var(--line);padding:2px 8px;font-size:.68rem;font-family:var(--mono);color:var(--ink-2)}
+
+  .score-badge{font-family:var(--mono);font-size:.82rem;font-weight:600;padding:4px 11px;border-radius:20px;white-space:nowrap}
+  .score-badge.high{background:rgba(6,200,154,.18);color:#03795D}
+  .score-badge.mid{background:rgba(25,133,161,.16);color:var(--navy-2)}
+  .score-badge.low{background:rgba(15,23,42,.07);color:var(--ink-2)}
+
+  .score-chart{margin-bottom:16px;padding:14px 16px;background:#fff;border:1px solid var(--line)}
+  .score-chart .chart-title{font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);margin-bottom:10px}
+  .chart-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+  .chart-row:last-child{margin-bottom:0}
+  .chart-row .chart-label{width:150px;flex-shrink:0;font-size:.78rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chart-row .chart-track{flex:1;background:rgba(15,23,42,.06);height:16px;position:relative}
+  .chart-row .chart-fill{height:100%;transition:width .4s ease}
+  .chart-row .chart-fill.high{background:var(--mint)}
+  .chart-row .chart-fill.mid{background:var(--navy-2)}
+  .chart-row .chart-fill.low{background:#9CA3AF}
+  .chart-row .chart-pct{width:42px;flex-shrink:0;text-align:right;font-family:var(--mono);font-size:.76rem;color:var(--ink-2)}
+
+  .offers-box{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+  .offer-row{padding:8px 0;border-bottom:1px solid var(--line);font-size:.85rem}
+  .offer-row:last-child{border-bottom:none}
+  .offer-row a{color:var(--navy-2);text-decoration:none;font-weight:600}
+  .offer-row a:hover{text-decoration:underline}
+  .offer-row .offer-meta{font-family:var(--mono);font-size:.72rem;color:var(--ink-2);margin-top:2px}
+
+  .empty{font-family:var(--mono);font-size:.85rem;color:var(--ink-2);padding:30px 0;text-align:center}
+
+  .spinner{display:inline-block;width:11px;height:11px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:6px;vertical-align:-1px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Back-office — Missions &amp; Matching</h1>
+    <div class="sub">CV-Thèque Intelligente · usage interne</div>
+  </div>
+  <div class="key-box">
+    <input type="password" id="adminKeyInput" placeholder="Clé admin (X-Admin-Key)" autocomplete="off">
+    <button id="saveKeyBtn" type="button">Valider</button>
+    <span id="keyStatus" class="key-status"></span>
+  </div>
+</header>
+
+<main>
+  <div class="toolbar">
+    <input type="text" id="expertiseInput" placeholder="Rechercher une mission par expertise recherchée…">
+    <button class="btn" id="searchBtn" type="button">Rechercher une mission</button>
+    <button class="btn ghost" id="resetBtn" type="button">Toutes les missions</button>
+  </div>
+
+  <p id="globalStatus" role="status"></p>
+
+  <div id="missionList" class="mission-list"></div>
+</main>
+
+<script>
+var API_BASE = "https://projet-cv-theque-intelligent.onrender.com";
+var $ = function(sel, ctx){ return (ctx||document).querySelector(sel); };
+var $$ = function(sel, ctx){ return Array.prototype.slice.call((ctx||document).querySelectorAll(sel)); };
+
+var adminKeyInput = $("#adminKeyInput");
+var keyStatus = $("#keyStatus");
+var globalStatus = $("#globalStatus");
+var missionList = $("#missionList");
+var expertiseInput = $("#expertiseInput");
+
+function getAdminKey(){
+  return sessionStorage.getItem("admin_key") || "";
+}
+function setAdminKey(key){
+  sessionStorage.setItem("admin_key", key);
+}
+
+function escHtml(s){
+  return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function scoreClass(score){
+  if(score>=70) return "high";
+  if(score>=40) return "mid";
+  return "low";
+}
+function statusLabel(statut){
+  var labels = {en_attente:"En attente", en_cours:"Matching en cours", terminee:"Terminé", echec:"Échec"};
+  return labels[statut] || statut;
+}
+function fmtDate(iso){
+  try{
+    var d = new Date(iso);
+    return d.toLocaleString("fr-FR", {day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit"});
+  }catch(e){ return iso; }
+}
+
+function apiFetch(path, opts){
+  opts = opts || {};
+  opts.headers = Object.assign({"X-Admin-Key": getAdminKey()}, opts.headers || {});
+  return fetch(API_BASE + path, opts).then(function(r){
+    if(r.status === 401){
+      setKeyStatus(false, "Clé invalide ou manquante.");
+      throw new Error("Non autorisé (401) — vérifiez la clé admin.");
+    }
+    if(!r.ok){
+      return r.json().then(function(err){ throw new Error(err.detail || ("Erreur serveur (" + r.status + ")")); })
+        .catch(function(){ throw new Error("Erreur serveur (" + r.status + ")"); });
+    }
+    return r.json();
+  });
+}
+
+function setKeyStatus(ok, msg){
+  keyStatus.className = "key-status " + (ok ? "ok" : "err");
+  keyStatus.textContent = msg;
+}
+
+function buildScoreChart(resultats){
+  var box = document.createElement("div");
+  box.className = "score-chart";
+  var title = document.createElement("div");
+  title.className = "chart-title";
+  title.textContent = "Scores de pertinence (%)";
+  box.appendChild(title);
+
+  resultats.forEach(function(c){
+    var row = document.createElement("div");
+    row.className = "chart-row";
+    var label = escHtml((c.prenom||"")+" "+(c.nom||""));
+    row.innerHTML =
+      '<div class="chart-label" title="'+label+'">'+label+'</div>'+
+      '<div class="chart-track"><div class="chart-fill '+scoreClass(c.score)+'" style="width:'+c.score+'%"></div></div>'+
+      '<div class="chart-pct">'+c.score+'%</div>';
+    box.appendChild(row);
+  });
+  return box;
+}
+
+function renderMissionResults(container, data){
+  container.innerHTML = "";
+  var statusLine = document.createElement("div");
+  statusLine.className = "rstatus";
+  statusLine.textContent = "Statut : " + statusLabel(data.statut) + (data.resultats.length ? " — " + data.resultats.length + " profil(s) évalué(s)" : "");
+  container.appendChild(statusLine);
+
+  if(data.statut === "en_attente"){
+    var p = document.createElement("p");
+    p.className = "empty";
+    p.textContent = "Matching pas encore lancé pour cette mission.";
+    container.appendChild(p);
+    return;
+  }
+  if(data.resultats.length === 0){
+    var p2 = document.createElement("p");
+    p2.className = "empty";
+    p2.textContent = "Aucun candidat pertinent trouvé.";
+    container.appendChild(p2);
+    return;
+  }
+
+  container.appendChild(buildScoreChart(data.resultats));
+
+  data.resultats.forEach(function(c){
+    var row = document.createElement("div");
+    row.className = "candidate-row";
+    var tagsHtml = (c.competences||[]).slice(0,8).map(function(t){ return "<span>"+escHtml(t)+"</span>"; }).join("");
+    var contactBits = [];
+    if(c.email) contactBits.push('<a href="mailto:'+escHtml(c.email)+'">'+escHtml(c.email)+'</a>');
+    if(c.telephone) contactBits.push(escHtml(c.telephone));
+    row.innerHTML =
+      '<div class="candidate-main">'+
+        '<h4>'+escHtml(c.prenom)+' '+escHtml(c.nom)+'</h4>'+
+        '<div class="poste">'+escHtml(c.poste_vise||"")+'</div>'+
+        (contactBits.length ? '<div class="contact">'+contactBits.join(" · ")+'</div>' : '')+
+        (c.justification ? '<div class="justif">'+escHtml(c.justification)+'</div>' : '')+
+        (tagsHtml ? '<div class="tags">'+tagsHtml+'</div>' : '')+
+      '</div>'+
+      '<span class="score-badge '+scoreClass(c.score)+'">'+c.score+'%</span>';
+    container.appendChild(row);
+  });
+}
+
+function renderOffresExternes(container, data){
+  if(!data.offres || data.offres.length === 0){
+    container.innerHTML = '<div class="rstatus">Aucune offre trouvée sur France Travail pour "'+escHtml(data.mots_cles_utilises)+'".</div>';
+    return;
+  }
+  var html = '<div class="rstatus">'+data.offres.length+' offre(s) trouvée(s) sur '+escHtml(data.source)+' pour "'+escHtml(data.mots_cles_utilises)+'" :</div>';
+  data.offres.forEach(function(o){
+    html +=
+      '<div class="offer-row">'+
+        (o.url ? '<a href="'+escHtml(o.url)+'" target="_blank" rel="noopener">'+escHtml(o.intitule)+'</a>' : escHtml(o.intitule))+
+        '<div class="offer-meta">'+escHtml(o.entreprise)+(o.lieu ? ' · '+escHtml(o.lieu) : '')+(o.type_contrat ? ' · '+escHtml(o.type_contrat) : '')+(o.date_creation ? ' · '+escHtml(o.date_creation) : '')+'</div>'+
+        (o.description_courte ? '<div class="offer-meta">'+escHtml(o.description_courte)+'</div>' : '')+
+      '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function renderMissionCard(mission){
+  var card = document.createElement("div");
+  card.className = "mission-card";
+
+  var head = document.createElement("div");
+  head.className = "mission-head";
+  head.innerHTML =
+    '<div class="mission-main">'+
+      '<h3>'+escHtml(mission.societe)+' <span class="status-pill '+mission.statut+'">'+statusLabel(mission.statut)+'</span></h3>'+
+      '<div class="meta">'+escHtml(mission.expertise)+' · '+escHtml(mission.engagement||"—")+' · '+fmtDate(mission.date_reception)+'</div>'+
+      '<div class="meta">Recruteur : '+escHtml(mission.nom_recruteur||"—")+' ('+escHtml(mission.email_recruteur)+')</div>'+
+    '</div>'+
+    '<div class="mission-actions">'+
+      '<button class="btn ghost" data-action="voir">Voir les résultats</button>'+
+      '<button class="btn" data-action="lancer">Lancer le matching</button>'+
+      '<button class="btn ghost" data-action="offres">Offres similaires (France Travail)</button>'+
+    '</div>';
+
+  var resultsBox = document.createElement("div");
+  resultsBox.className = "mission-results";
+
+  card.appendChild(head);
+  card.appendChild(resultsBox);
+
+  var lancerBtn = head.querySelector('[data-action="lancer"]');
+  var voirBtn = head.querySelector('[data-action="voir"]');
+  var offresBtn = head.querySelector('[data-action="offres"]');
+
+  function toggleResults(show){
+    resultsBox.classList.toggle("show", show);
+  }
+
+  voirBtn.addEventListener("click", function(){
+    if(resultsBox.classList.contains("show")){
+      toggleResults(false);
+      return;
+    }
+    resultsBox.innerHTML = '<div class="rstatus">Chargement…</div>';
+    toggleResults(true);
+    apiFetch("/api/v1/admin/missions/" + mission.id + "/resultats")
+      .then(function(data){ renderMissionResults(resultsBox, data); })
+      .catch(function(err){
+        resultsBox.innerHTML = '<div class="rstatus err">'+escHtml(err.message)+'</div>';
+      });
+  });
+
+  lancerBtn.addEventListener("click", function(){
+    lancerBtn.disabled = true;
+    lancerBtn.innerHTML = '<span class="spinner"></span>Matching en cours…';
+    resultsBox.innerHTML = '<div class="rstatus">Analyse des candidatures en cours — cela peut prendre plusieurs minutes selon le nombre de CV en base…</div>';
+    toggleResults(true);
+
+    apiFetch("/api/v1/admin/missions/" + mission.id + "/lancer-matching", { method: "POST" })
+      .then(function(data){
+        renderMissionResults(resultsBox, data);
+        var pill = head.querySelector(".status-pill");
+        pill.className = "status-pill " + data.statut;
+        pill.textContent = statusLabel(data.statut);
+      })
+      .catch(function(err){
+        resultsBox.innerHTML = '<div class="rstatus err">'+escHtml(err.message)+'</div>';
+      })
+      .finally(function(){
+        lancerBtn.disabled = false;
+        lancerBtn.textContent = "Lancer le matching";
+      });
+  });
+
+  offresBtn.addEventListener("click", function(){
+    offresBtn.disabled = true;
+    offresBtn.innerHTML = '<span class="spinner"></span>Recherche…';
+    if(!resultsBox.classList.contains("show")){
+      resultsBox.innerHTML = '<div class="rstatus">Statut : ' + statusLabel(mission.statut) + '</div>';
+      toggleResults(true);
+    }
+    var existingOffersBox = resultsBox.querySelector(".offers-box");
+    if(existingOffersBox) existingOffersBox.remove();
+
+    var offersBox = document.createElement("div");
+    offersBox.className = "offers-box";
+    offersBox.innerHTML = '<div class="rstatus">Recherche d\'offres sur France Travail (mots-clés : "'+escHtml(mission.expertise)+'")…</div>';
+    resultsBox.appendChild(offersBox);
+
+    apiFetch("/api/v1/admin/missions/" + mission.id + "/offres-similaires")
+      .then(function(data){
+        renderOffresExternes(offersBox, data);
+      })
+      .catch(function(err){
+        offersBox.innerHTML = '<div class="rstatus err">'+escHtml(err.message)+'</div>';
+      })
+      .finally(function(){
+        offresBtn.disabled = false;
+        offresBtn.textContent = "Offres similaires (France Travail)";
+      });
+  });
+
+  return card;
+}
+
+function renderMissionList(missions){
+  missionList.innerHTML = "";
+  if(!missions.length){
+    missionList.innerHTML = '<p class="empty">Aucune mission trouvée.</p>';
+    return;
+  }
+  missions.forEach(function(m){ missionList.appendChild(renderMissionCard(m)); });
+}
+
+function loadAllMissions(){
+  globalStatus.className = "show";
+  globalStatus.textContent = "Chargement des missions…";
+  apiFetch("/api/v1/admin/missions")
+    .then(function(missions){
+      globalStatus.className = "";
+      renderMissionList(missions);
+    })
+    .catch(function(err){
+      globalStatus.className = "show err";
+      globalStatus.textContent = err.message;
+    });
+}
+
+function searchMissions(){
+  var expertise = expertiseInput.value.trim();
+  if(!expertise){ loadAllMissions(); return; }
+  globalStatus.className = "show";
+  globalStatus.textContent = "Recherche en cours…";
+  apiFetch("/api/v1/admin/missions/recherche?expertise=" + encodeURIComponent(expertise))
+    .then(function(missions){
+      globalStatus.className = "";
+      renderMissionList(missions);
+    })
+    .catch(function(err){
+      globalStatus.className = "show err";
+      globalStatus.textContent = err.message;
+    });
+}
+
+$("#searchBtn").addEventListener("click", searchMissions);
+expertiseInput.addEventListener("keydown", function(e){ if(e.key === "Enter") searchMissions(); });
+$("#resetBtn").addEventListener("click", function(){ expertiseInput.value = ""; loadAllMissions(); });
+
+$("#saveKeyBtn").addEventListener("click", function(){
+  var key = adminKeyInput.value.trim();
+  if(!key){ setKeyStatus(false, "Renseignez une clé."); return; }
+  setAdminKey(key);
+  setKeyStatus(true, "Clé enregistrée pour cette session.");
+  loadAllMissions();
+});
+
+// Pré-remplit le champ si une clé est déjà en mémoire de session (ex: rechargement de page)
+if(getAdminKey()){
+  adminKeyInput.value = getAdminKey();
+  setKeyStatus(true, "Clé chargée depuis cette session.");
+  loadAllMissions();
+}
+</script>
+</body>
+</html>

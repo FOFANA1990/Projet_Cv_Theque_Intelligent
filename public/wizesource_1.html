@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WizeSource — Sourcing &amp; placement d'experts cyber, IT &amp; IA | par WizeTech</title>
+<meta name="description" content="WizeSource, le sourcing du réseau WizeTech : décrivez votre mission, recevez une shortlist d'experts cybersécurité, IT et IA qualifiés par des pairs. Régie, forfait ou pré-embauche via WizePort.">
+<meta name="author" content="WizeSource — WizeTech">
+<meta property="og:title" content="WizeSource — Le bon expert. Pas le CV disponible.">
+<meta property="og:description" content="Sourcing et placement d'experts qualifiés par des pairs. Par WizeTech.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23002A3F'/%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%231985A1' stroke-width='2.4'/%3E%3Cpath d='M16 16l7.5-7.5' stroke='%2304CEFC' stroke-width='2.4'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%2306F9BE'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "WizeSource",
+  "description": "Sourcing et placement d'experts cybersécurité, IT et IA — une marque de WizeTech S.à r.l.",
+  "parentOrganization": { "@type": "Organization", "name": "WizeTech S.à r.l." },
+  "email": "contact@wizetech.lu",
+  "areaServed": ["LU", "BE", "FR"]
+}
+</script>
+<style>
+/* ============================================================
+   WIZESOURCE — MARQUE SŒUR DE WIZETECH (sourcing entreprises)
+   Même système graphique (BrandDoc V1), accent bleu acier.
+   ============================================================ */
+:root{
+  --navy:#002A3F; --navy-deep:#001824; --navy-3:#014A66;
+  --steel:#1985A1; --steel-l:#3FB2CE; --cyan:#04CEFC; --cyan-l:#00E7FF; --mint:#06F9BE;
+  --white:#FFFFFF; --ink70:rgba(255,255,255,.72); --ink50:rgba(255,255,255,.52); --ink30:rgba(255,255,255,.30);
+  --line:rgba(255,255,255,.14); --glass:rgba(0,42,63,.55);
+  --light-bg:#ECF2F5; --light-ink:#002A3F; --light-ink2:#3A5866;
+  --sg:"Space Grotesk",system-ui,sans-serif;
+  --ps:"IBM Plex Sans",system-ui,sans-serif;
+  --pm:"IBM Plex Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.22,.7,.25,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  background:linear-gradient(168deg,var(--navy-deep) 0%,var(--navy) 46%,#013348 78%,#01415c 100%) fixed,var(--navy);
+  color:var(--white); font-family:var(--ps); font-size:16px; line-height:1.7; overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    linear-gradient(rgba(25,133,161,.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(25,133,161,.07) 1px,transparent 1px);
+  background-size:52px 52px;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 25%,black 30%,transparent 92%);
+          mask-image:radial-gradient(ellipse at 50% 25%,black 30%,transparent 92%);
+}
+h1,h2,h3,h4{font-family:var(--sg);font-weight:600;line-height:1.15}
+p{max-width:68ch}
+a{color:var(--cyan-l)}
+::selection{background:var(--steel-l);color:var(--navy)}
+:focus-visible{outline:2px solid var(--steel-l);outline-offset:3px}
+::-webkit-scrollbar{width:9px}::-webkit-scrollbar-track{background:var(--navy-deep)}::-webkit-scrollbar-thumb{background:var(--steel)}
+.skip{position:absolute;left:-999px;top:0;background:var(--steel-l);color:var(--navy);padding:10px 16px;z-index:200;font-family:var(--sg)}
+.skip:focus{left:12px;top:12px}
+#progress{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--steel-l),var(--cyan));z-index:110}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px;position:relative}
+section.sec{position:relative;padding:100px 0}
+.surt{display:flex;align-items:center;gap:14px;font-weight:300;font-style:italic;letter-spacing:.26em;text-transform:uppercase;color:var(--steel-l);font-size:.78rem;margin-bottom:18px}
+.surt::before{content:"";width:34px;height:1px;background:var(--steel-l)}
+.surt .n{font-family:var(--pm);font-style:normal;color:var(--ink50)}
+h2.t{font-size:clamp(1.9rem,4.2vw,2.9rem);max-width:24ch;margin-bottom:18px}
+h2.t .hl{position:relative;white-space:nowrap}
+h2.t .hl::after{content:"";position:absolute;left:0;bottom:.05em;height:.14em;width:100%;background:var(--mint);transform:scaleX(0);transform-origin:left;transition:transform .9s var(--ease) .3s;z-index:-1}
+.in h2.t .hl::after,h2.t.in .hl::after{transform:scaleX(1)}
+.lead{color:var(--ink70);font-size:1.05rem;max-width:62ch}
+.ghost{position:absolute;top:22px;right:0;font-family:var(--sg);font-weight:700;font-size:clamp(6rem,15vw,11rem);line-height:1;color:transparent;-webkit-text-stroke:1px rgba(63,178,206,.14);pointer-events:none;user-select:none}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.rv.in{opacity:1;transform:none}
+body.rm .rv{opacity:1;transform:none;transition:none}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;font-family:var(--sg);font-weight:600;font-size:.9rem;text-decoration:none;padding:13px 26px;cursor:pointer;transition:transform .25s var(--ease),background .25s,filter .25s;position:relative;border:0}
+.btn.st{background:var(--steel-l);color:var(--navy)}
+.btn.st:hover{filter:brightness(1.1)}
+.btn.s{background:transparent;color:var(--white);border:1px solid var(--steel-l)}
+.btn.s:hover{background:rgba(63,178,206,.12)}
+.btn .ar{transition:transform .25s}
+.btn:hover .ar{transform:translateX(4px)}
+.btn.st::before,.btn.st::after{content:"";position:absolute;width:10px;height:10px;border:2px solid var(--mint);opacity:0;transition:opacity .25s,transform .25s}
+.btn.st::before{top:-6px;left:-6px;border-right:0;border-bottom:0;transform:translate(4px,4px)}
+.btn.st::after{bottom:-6px;right:-6px;border-left:0;border-top:0;transform:translate(-4px,-4px)}
+.btn.st:hover::before,.btn.st:hover::after{opacity:1;transform:translate(0,0)}
+.badge{display:inline-block;font-weight:600;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;padding:4px 10px;border:1px solid var(--steel-l);color:var(--steel-l);background:rgba(63,178,206,.07);white-space:nowrap}
+.badge.m{border-color:var(--mint);color:var(--mint);background:rgba(6,249,190,.06)}
+.badge.dim{border-color:var(--ink30);color:var(--ink50);background:none}
+
+/* ---------- HEADER ---------- */
+header.top{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,24,36,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:11px 0}
+.navwrap{max-width:1180px;margin:0 auto;padding:0 32px;display:flex;align-items:center;gap:26px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--white)}
+.brand svg{width:26px;height:26px;flex:none}
+.brand .wm{font-family:var(--sg);font-weight:700;font-size:1.16rem;letter-spacing:.05em}
+.brand .wm b{background:var(--steel-l);color:var(--navy);padding:1px 8px;margin-left:6px}
+.brand small{font-family:var(--pm);font-size:.6rem;letter-spacing:.14em;color:var(--ink50);text-transform:uppercase;display:block;margin-top:2px}
+nav.main{margin-left:auto;display:flex;align-items:center;gap:24px}
+nav.main a.lnk{color:var(--ink70);text-decoration:none;font-size:.88rem;font-weight:500;transition:color .25s}
+nav.main a.lnk:hover{color:var(--steel-l)}
+nav.main a.back{color:var(--cyan);text-decoration:none;font-size:.86rem;font-weight:600;border:1px solid rgba(4,206,252,.5);padding:8px 13px;transition:background .25s}
+nav.main a.back:hover{background:rgba(4,206,252,.1)}
+#burger{margin-left:auto;display:none;background:none;border:1px solid var(--line);width:46px;height:42px;cursor:pointer;position:relative;z-index:106}
+#burger span{position:absolute;left:11px;right:11px;height:2px;background:var(--white);transition:transform .35s var(--ease),opacity .25s,top .35s}
+#burger span:nth-child(1){top:13px}#burger span:nth-child(2){top:20px}#burger span:nth-child(3){top:27px}
+#burger.open span:nth-child(1){top:20px;transform:rotate(45deg)}
+#burger.open span:nth-child(2){opacity:0}
+#burger.open span:nth-child(3){top:20px;transform:rotate(-45deg)}
+#mobmenu{position:fixed;inset:0;background:rgba(0,24,36,.97);z-index:104;display:flex;flex-direction:column;justify-content:center;padding:90px 40px 40px;gap:8px;transform:translateY(-102%);transition:transform .5s var(--ease)}
+#mobmenu.open{transform:translateY(0)}
+#mobmenu a{color:var(--white);text-decoration:none;font-family:var(--sg);font-weight:600;font-size:clamp(1.4rem,6vw,2rem);padding:10px 0;border-bottom:1px solid var(--line)}
+#mobmenu a.bk{color:var(--cyan)}
+@media (max-width:920px){nav.main{display:none}#burger{display:block}}
+
+/* ---------- HERO ---------- */
+#hero{min-height:88svh;display:flex;flex-direction:column;justify-content:center;position:relative;padding:208px 0 90px;overflow:hidden}
+#radar{position:absolute;top:50%;right:min(1vw,50px);transform:translateY(-50%);width:min(46vw,640px);height:min(46vw,640px);z-index:0;opacity:.85}
+@media (max-width:960px){#radar{right:50%;transform:translate(50%,-50%);opacity:.3;width:120vw;height:120vw}}
+#hero .wrap{z-index:2}
+#hero h1{font-size:clamp(2.4rem,5.2vw,4.1rem);font-weight:700;max-width:16ch;letter-spacing:-.01em}
+#hero h1 .hl{position:relative;white-space:nowrap}
+#hero h1 .hl::after{content:"";position:absolute;left:0;bottom:.05em;height:.13em;width:100%;background:var(--mint);transform:scaleX(0);transform-origin:left;transition:transform 1s var(--ease) .7s}
+#hero.go h1 .hl::after{transform:scaleX(1)}
+body.rm #hero h1 .hl::after{transform:scaleX(1)}
+#hero .sub{margin-top:24px;color:var(--ink70);font-size:1.08rem;max-width:54ch}
+#hero .ctas{display:flex;gap:16px;margin-top:36px;flex-wrap:wrap}
+#hero .badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:42px}
+
+/* ---------- MÉTHODE ---------- */
+.steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:50px}
+@media (max-width:1000px){.steps4{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.steps4{grid-template-columns:1fr}}
+.st{background:var(--glass);border:1px solid var(--line);border-radius:6px;padding:24px;position:relative;transition:transform .35s var(--ease),border-color .35s}
+.st:hover{transform:translateY(-4px);border-color:rgba(63,178,206,.55)}
+.st .n{font-family:var(--sg);font-weight:700;font-size:1.9rem;color:var(--steel-l);opacity:.9}
+.st h3{font-size:1.05rem;margin:10px 0 8px}
+.st p{color:var(--ink70);font-size:.9rem}
+
+/* ---------- PROFILS ---------- */
+.avert{font-size:.85rem;color:var(--ink50);border-left:3px solid var(--mint);padding-left:16px;margin-top:18px;max-width:76ch}
+.profils{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
+@media (max-width:1000px){.profils{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.profils{grid-template-columns:1fr}}
+.pf{background:var(--glass);border:1px solid var(--line);border-radius:6px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:24px;display:flex;flex-direction:column;gap:12px;transition:transform .35s var(--ease),border-color .35s}
+.pf:hover{transform:translateY(-4px);border-color:rgba(63,178,206,.55)}
+.pf .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.pf h3{font-size:1.02rem}
+.pf .tags{display:flex;flex-wrap:wrap;gap:7px}
+.pf .tags span{font-family:var(--pm);font-size:.62rem;color:var(--ink70);border:1px solid rgba(255,255,255,.22);padding:3px 8px}
+.pf p{color:var(--ink70);font-size:.88rem;flex:1}
+.pf .ask{align-self:flex-start;background:none;border:1px solid var(--steel-l);color:var(--white);font-family:var(--sg);font-weight:600;font-size:.82rem;padding:9px 16px;cursor:pointer;transition:all .25s;display:inline-flex;gap:8px;align-items:center}
+.pf .ask:hover{background:rgba(63,178,206,.14)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:38px 0 8px}
+.fbtn{background:none;border:1px solid var(--line);color:var(--ink70);font-family:var(--sg);font-weight:500;font-size:.82rem;padding:9px 16px;cursor:pointer;transition:all .25s}
+.fbtn:hover{border-color:var(--steel-l);color:var(--white)}
+.fbtn.on{background:var(--steel-l);border-color:var(--steel-l);color:var(--navy);font-weight:600}
+.jcount{font-family:var(--pm);font-size:.7rem;letter-spacing:.14em;color:var(--ink50);text-transform:uppercase;margin-bottom:8px}
+
+/* ---------- BANDEAU DOMAINES ---------- */
+.band{border-top:1px solid rgba(63,178,206,.45);border-bottom:1px solid rgba(63,178,206,.45);overflow:hidden;padding:17px 0;position:relative;z-index:2;
+  background:linear-gradient(90deg,rgba(25,133,161,.38) 0%,rgba(1,51,72,.92) 45%,rgba(25,133,161,.2) 100%),var(--navy-deep)}
+.band .track{display:flex;width:max-content;animation:mq 68s linear infinite;animation-delay:-17s}
+.band:hover .track{animation-play-state:paused}
+body.rm .band .track{animation:none}
+.band .set{display:flex;align-items:center}
+.band .it{font-family:var(--sg);font-weight:500;font-size:.92rem;color:rgba(255,255,255,.85);padding:0 26px;display:flex;align-items:center;gap:26px;white-space:nowrap}
+.band .it::after{content:"◆";font-size:.5rem;color:var(--steel-l)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ---------- ENGAGEMENTS ---------- */
+.engage{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:54px}
+@media (max-width:900px){.engage{grid-template-columns:1fr 1fr}}
+.eng{background:var(--navy);padding:22px 20px;position:relative;overflow:hidden}
+.eng::after{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:var(--steel-l);transform:scaleX(0);transform-origin:left;transition:transform .8s var(--ease)}
+.eng:hover::after{transform:scaleX(1)}
+.eng .v{font-family:var(--sg);font-weight:700;font-size:1.9rem;color:var(--steel-l);line-height:1.1}
+.eng .l{color:var(--ink70);font-size:.82rem;margin-top:6px;line-height:1.45}
+
+/* ---------- CONFIER UNE MISSION — zone claire unique ---------- */
+#mission{background:var(--light-bg);color:var(--light-ink)}
+#mission .surt{color:#116b83}
+#mission .surt::before{background:#116b83}
+#mission .surt .n{color:var(--light-ink2)}
+#mission .lead{color:var(--light-ink2)}
+#mission .ghost{-webkit-text-stroke-color:rgba(0,42,63,.1)}
+form.cf{display:grid;gap:16px;margin-top:44px;background:#fff;border:1px solid rgba(0,42,63,.14);padding:34px}
+.cf .duo2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:640px){.cf .duo2{grid-template-columns:1fr}}
+.cf label{display:grid;gap:7px;font-family:var(--pm);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--light-ink2)}
+.cf input,.cf select,.cf textarea{background:#F4F8FA;border:1px solid rgba(0,42,63,.2);color:var(--light-ink);font-family:var(--ps);font-size:.95rem;padding:13px 15px;transition:border-color .3s;width:100%}
+.cf input:focus,.cf select:focus,.cf textarea:focus{border-color:var(--steel);outline:none}
+.cf textarea{min-height:120px;resize:vertical}
+.cf .hp{position:absolute;left:-9999px;opacity:0;height:0;overflow:hidden}
+.cf .note{font-size:.78rem;color:var(--light-ink2);max-width:none}
+#formok{display:none;border:1px solid #049e79;background:rgba(6,249,190,.12);color:#02664e;padding:14px 18px;font-size:.9rem;max-width:none}
+#formok.show{display:block}
+.cf .btn.st{justify-self:start}
+/* Résultats de matching (WizeSource) */
+#matchStatus{display:none;font-size:.9rem;color:var(--light-ink2);margin-top:24px;font-family:var(--pm)}
+#matchStatus.show{display:block}
+#matchStatus.err{color:#b3261e}
+.match-results{display:grid;gap:14px;margin-top:20px}
+.match-card{background:#fff;border:1px solid rgba(0,42,63,.14);padding:20px 22px;display:grid;gap:9px;animation:mcIn .4s var(--ease)}
+@keyframes mcIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.match-card .mc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.match-card h4{font-family:var(--sg);color:var(--light-ink);font-size:1.05rem;font-weight:600}
+.match-card .mc-poste{font-family:var(--pm);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--light-ink2);margin-top:3px}
+.mc-score{font-family:var(--pm);font-size:.82rem;font-weight:600;padding:5px 13px;border-radius:20px;white-space:nowrap}
+.mc-score.high{background:rgba(6,249,190,.18);color:#02664e}
+.mc-score.mid{background:rgba(25,133,161,.16);color:var(--navy-3)}
+.mc-score.low{background:rgba(0,42,63,.07);color:var(--light-ink2)}
+.match-card .mc-contact{font-size:.85rem;color:var(--light-ink2)}
+.match-card .mc-contact a{color:var(--navy-3);text-decoration:none}
+.match-card .mc-contact a:hover{text-decoration:underline}
+.match-card .mc-justif{font-size:.85rem;color:var(--light-ink2);font-style:italic}
+.match-card .mc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.match-card .mc-tags span{background:#F4F8FA;border:1px solid rgba(0,42,63,.12);padding:3px 10px;font-size:.72rem;font-family:var(--pm);color:var(--light-ink2)}
+
+/* ---------- PASSERELLE ---------- */
+.pass{border:1px solid rgba(6,249,190,.4);background:linear-gradient(150deg,rgba(6,249,190,.07),rgba(0,42,63,.4));border-radius:6px;padding:30px;margin-top:26px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+@media (max-width:780px){.pass{grid-template-columns:1fr}}
+.pass h3{color:var(--mint);font-size:1.15rem;margin-bottom:6px}
+.pass p{color:var(--ink70);font-size:.92rem;max-width:none}
+
+/* ---------- FOOTER + DIALOGS ---------- */
+footer{border-top:1px solid var(--line);background:rgba(0,24,36,.75);margin-top:100px}
+footer .in{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:44px 0}
+footer .fwm{font-family:var(--sg);font-weight:700;font-size:1.2rem}
+footer .fwm b{color:var(--steel-l)}
+footer p,footer a{color:var(--ink50);font-size:.82rem}
+footer a{color:var(--ink70)}
+footer a:hover{color:var(--steel-l)}
+footer .legal{border-top:1px solid var(--line);padding:20px 0;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--ink50);font-size:.76rem}
+footer .legal button{background:none;border:0;color:var(--ink70);font-family:var(--ps);font-size:.76rem;cursor:pointer;padding:0}
+footer .legal button:hover{color:var(--steel-l);text-decoration:underline}
+dialog{background:var(--navy);color:var(--white);border:1px solid var(--steel);padding:0;max-width:660px;width:calc(100vw - 40px);max-height:84vh;margin:auto}
+dialog::backdrop{background:rgba(0,12,20,.82);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+dialog .dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding:26px 30px 0}
+dialog h3{font-size:1.3rem}
+dialog .dbody{padding:18px 30px 30px;overflow-y:auto;color:var(--ink70);font-size:.94rem;display:grid;gap:14px}
+dialog .dbody p{max-width:none}
+dialog .dbody b{color:var(--white)}
+dialog .x{background:none;border:1px solid var(--line);color:var(--ink70);width:40px;height:40px;cursor:pointer;font-size:1.1rem;flex:none}
+dialog .x:hover{border-color:var(--steel-l);color:var(--steel-l)}
+
+/* ---------- BANDEAUX FIXES — harmonisation écosystème ---------- */
+#band-top{position:fixed;left:0;right:0;top:var(--hh,66px);z-index:96;box-shadow:0 10px 28px rgba(0,12,20,.4)}
+#band-bottom{position:fixed;left:0;right:0;bottom:0;z-index:97;box-shadow:0 -10px 28px rgba(0,12,20,.45)}
+#band-bottom .track{animation-direction:reverse}
+section.sec{scroll-margin-top:calc(var(--hh,66px) + 62px)}
+footer{padding-bottom:88px}
+@media (max-width:640px){.band{padding:13px 0}.band .it{font-size:.8rem;padding:0 16px;gap:16px}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+<div id="progress" aria-hidden="true"></div>
+
+<header class="top" id="topbar">
+  <div class="navwrap">
+    <a class="brand" href="#hero" aria-label="WizeSource — accueil">
+      <svg viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <circle cx="13" cy="13" r="9.5" stroke="#3FB2CE" stroke-width="2"/>
+        <path d="M13 13l6-6" stroke="#3FB2CE" stroke-width="2" stroke-linecap="square"/>
+        <circle cx="13" cy="13" r="1.6" fill="#06F9BE"/>
+      </svg>
+      <span><span class="wm">WIZE<b>SOURCE</b></span><small>Sourcing &amp; placement · par WizeTech</small></span>
+    </a>
+    <nav class="main" aria-label="Navigation principale">
+      <a class="lnk" href="#methode">La méthode</a>
+      <a class="lnk" href="#profils">Profils</a>
+      <a class="lnk" href="wizecrew.html">WizeCrew</a>
+      <a class="back" href="wizetech.html">← WizeTech</a>
+      <a class="btn st" href="#mission">Confier une mission</a>
+    </nav>
+    <button id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobmenu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div id="mobmenu">
+  <a href="#methode">La méthode</a>
+  <a href="#profils">Profils</a>
+  <a href="#mission">Confier une mission</a>
+  <a href="wizecrew.html">WizeCrew</a>
+  <a class="bk" href="wizetech.html">← Retour sur WizeTech</a>
+</div>
+
+<main id="main">
+
+<!-- ================= HERO ================= -->
+<section id="hero" aria-label="Accueil WizeSource">
+  <canvas id="radar" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <p class="surt">Sourcing entreprises — cybersécurité · IT · IA</p>
+    <h1>Le bon expert.<br>Pas le <span class="hl">CV disponible</span>.</h1>
+    <p class="sub">Décrivez votre mission : WizeSource balaie le réseau WizeTech et vous présente une shortlist resserrée d'experts qualifiés par des pairs — en régie, au forfait, ou en pré-embauche via WizePort.</p>
+    <div class="ctas">
+      <a class="btn st" href="#mission">Confier une mission <span class="ar">→</span></a>
+      <a class="btn s" href="#methode">Voir la méthode</a>
+    </div>
+    <div class="badges">
+      <span class="badge">Shortlist resserrée</span>
+      <span class="badge m">Qualifié par des pairs</span>
+      <span class="badge">Régie · Forfait · Pré-embauche</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BANDEAU DOMAINES SOURCÉS ================= -->
+<div id="band-top" class="band" aria-label="Domaines sourcés">
+  <div class="track">
+    <div class="set">
+      <span class="it">GRC &amp; conformité</span><span class="it">Pentest &amp; Red Team</span><span class="it">Architecture &amp; Cloud</span><span class="it">SOC &amp; détection</span><span class="it">IA &amp; data privacy</span><span class="it">Continuité &amp; crise</span><span class="it">RSSI à temps partagé</span><span class="it">Chefs de projet IT</span>
+    </div>
+    <div class="set" aria-hidden="true">
+      <span class="it">GRC &amp; conformité</span><span class="it">Pentest &amp; Red Team</span><span class="it">Architecture &amp; Cloud</span><span class="it">SOC &amp; détection</span><span class="it">IA &amp; data privacy</span><span class="it">Continuité &amp; crise</span><span class="it">RSSI à temps partagé</span><span class="it">Chefs de projet IT</span>
+    </div>
+    <div class="set" aria-hidden="true">
+      <span class="it">GRC &amp; conformité</span><span class="it">Pentest &amp; Red Team</span><span class="it">Architecture &amp; Cloud</span><span class="it">SOC &amp; détection</span><span class="it">IA &amp; data privacy</span><span class="it">Continuité &amp; crise</span><span class="it">RSSI à temps partagé</span><span class="it">Chefs de projet IT</span>
+    </div>
+    <div class="set" aria-hidden="true">
+      <span class="it">GRC &amp; conformité</span><span class="it">Pentest &amp; Red Team</span><span class="it">Architecture &amp; Cloud</span><span class="it">SOC &amp; détection</span><span class="it">IA &amp; data privacy</span><span class="it">Continuité &amp; crise</span><span class="it">RSSI à temps partagé</span><span class="it">Chefs de projet IT</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 01 MÉTHODE ================= -->
+<section class="sec" id="methode">
+  <div class="wrap">
+    <div class="ghost" aria-hidden="true">01</div>
+    <p class="surt rv"><span class="n">01</span> La méthode</p>
+    <h2 class="t rv">Quatre temps, <span class="hl">une shortlist</span>.</h2>
+    <p class="lead rv">Pas de CVthèque déversée dans votre boîte mail : un balayage méthodique du réseau, une qualification exigeante, une présentation argumentée.</p>
+    <div class="steps4">
+      <div class="st rv"><div class="n">01</div><h3>Cadrage</h3><p>Votre besoin, votre contexte, vos contraintes — réglementaires comprises. On reformule jusqu'à ce que ce soit net.</p></div>
+      <div class="st rv" data-d="90"><div class="n">02</div><h3>Sourcing</h3><p>Réseau WizeCrew, communauté WizeTech et chasse ciblée. On balaie large, on retient étroit.</p></div>
+      <div class="st rv" data-d="180"><div class="n">03</div><h3>Qualification par un pair</h3><p>Chaque profil est challengé par un expert du même métier — un pentester évalue un pentester, pas un mot-clé.</p></div>
+      <div class="st rv" data-d="270"><div class="n">04</div><h3>Présentation</h3><p>Une shortlist courte et argumentée : forces, limites, disponibilité, cadre. Vous rencontrez, vous décidez.</p></div>
+    </div>
+    <div class="pass rv">
+      <div>
+        <h3>L'essai avant l'embauche — avec WizePort</h3>
+        <p>Vous préférez recruter ? L'expert intervient d'abord chez vous, porté par WizePort, pendant une période d'essai commerciale. Si l'essai est concluant, vous l'embauchez en direct.</p>
+      </div>
+      <a class="btn s" href="wizeport.html#passerelle">Découvrir sur WizePort <span class="ar">→</span></a>
+    </div>
+    <div class="engage rv" aria-label="Nos engagements">
+      <div class="eng"><div class="v">≤ 2 j</div><div class="l">ouvrés pour un premier retour sur votre mission</div></div>
+      <div class="eng"><div class="v">1 pair</div><div class="l">expert du même métier derrière chaque qualification</div></div>
+      <div class="eng"><div class="v">3 pays</div><div class="l">Luxembourg · Belgique · France, sur site ou à distance</div></div>
+      <div class="eng"><div class="v">0</div><div class="l">CVthèque déversée — une shortlist courte et argumentée</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 02 PROFILS (démonstration) ================= -->
+<section class="sec" id="profils" style="padding-top:20px">
+  <div class="wrap">
+    <div class="ghost" aria-hidden="true">02</div>
+    <p class="surt rv"><span class="n">02</span> Le réseau</p>
+    <h2 class="t rv">Des profils types, <span class="hl">pas des promesses</span>.</h2>
+    <p class="lead rv">Un aperçu anonymisé des expertises que nous savons mobiliser.</p>
+    <p class="avert rv">Fiches de démonstration : elles illustrent les profils types du réseau, pas des consultants nommément disponibles à l'instant T. Les disponibilités réelles sont confirmées lors du cadrage.</p>
+    <div class="filters rv" role="group" aria-label="Filtrer les profils">
+      <button class="fbtn on" data-f="all">Tous</button>
+      <button class="fbtn" data-f="grc">GRC &amp; conformité</button>
+      <button class="fbtn" data-f="off">Offensif</button>
+      <button class="fbtn" data-f="archi">Architecture &amp; Cloud</button>
+      <button class="fbtn" data-f="soc">SOC</button>
+      <button class="fbtn" data-f="ia">IA &amp; data</button>
+      <button class="fbtn" data-f="it">IT &amp; projets</button>
+    </div>
+    <p class="jcount rv" id="jcount" aria-live="polite"></p>
+    <div class="profils rv" id="pfGrid">
+      <article class="pf" data-cat="grc">
+        <div class="top"><h3>Consultant·e GRC senior</h3><span class="badge dim">Démo</span></div>
+        <div class="tags"><span>10+ ans</span><span>Banque · Assurance</span><span>BNB · CCB · DORA</span></div>
+        <p>Conformités NIS2/DORA/ISO 27001 menées en environnement financier belge et luxembourgeois, à l'aise en comité de direction.</p>
+        <button class="ask" data-pf="Consultant·e GRC senior">Ce profil m'intéresse <span>→</span></button>
+      </article>
+      <article class="pf" data-cat="off">
+        <div class="top"><h3>Pentester certifié·e</h3><span class="badge dim">Démo</span></div>
+        <div class="tags"><span>OSCP</span><span>Web · API · AD</span><span>FR · BE · LU</span></div>
+        <p>Tests d'intrusion et campagnes d'ingénierie sociale, rapports orientés remédiation, retests inclus.</p>
+        <button class="ask" data-pf="Pentester certifié·e">Ce profil m'intéresse <span>→</span></button>
+      </article>
+      <article class="pf" data-cat="archi">
+        <div class="top"><h3>Architecte sécurité Cloud</h3><span class="badge dim">Démo</span></div>
+        <div class="tags"><span>AWS · Azure</span><span>Zero Trust</span><span>Landing zones</span></div>
+        <p>Conception de cibles sécurisées et durcissement de plateformes Cloud pour acteurs régulés.</p>
+        <button class="ask" data-pf="Architecte sécurité Cloud">Ce profil m'intéresse <span>→</span></button>
+      </article>
+      <article class="pf" data-cat="soc">
+        <div class="top"><h3>Analyste SOC &amp; détection</h3><span class="badge dim">Démo</span></div>
+        <div class="tags"><span>EDR · SIEM</span><span>Hunting</span><span>Hybride</span></div>
+        <p>Amélioration continue de la détection : règles, corrélation, réduction du bruit, indicateurs parlants.</p>
+        <button class="ask" data-pf="Analyste SOC &amp; détection">Ce profil m'intéresse <span>→</span></button>
+      </article>
+      <article class="pf" data-cat="ia">
+        <div class="top"><h3>Expert·e IA &amp; data privacy</h3><span class="badge dim">Démo</span></div>
+        <div class="tags"><span>AI Act</span><span>RGPD</span><span>Gouvernance</span></div>
+        <p>Inventaire et classification de systèmes d'IA, articulation AI Act / RGPD, politiques et comités.</p>
+        <button class="ask" data-pf="Expert·e IA &amp; data privacy">Ce profil m'intéresse <span>→</span></button>
+      </article>
+      <article class="pf" data-cat="it">
+        <div class="top"><h3>Chef·fe de projet IT</h3><span class="badge dim">Démo</span></div>
+        <div class="tags"><span>PMO</span><span>Programmes régulés</span><span>LU · BE</span></div>
+        <p>Cadrage et pilotage de projets critiques : planification, comités, risques — des trajectoires tenues.</p>
+        <button class="ask" data-pf="Chef·fe de projet IT">Ce profil m'intéresse <span>→</span></button>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 03 CONFIER UNE MISSION (zone claire) ================= -->
+<section class="sec" id="mission">
+  <div class="wrap">
+    <div class="ghost" aria-hidden="true">03</div>
+    <p class="surt rv"><span class="n">03</span> Votre mission</p>
+    <h2 class="t rv">Décrivez le besoin. <span class="hl">On balaie le réseau.</span></h2>
+    <p class="lead rv">Premier retour sous deux jours ouvrés, avec les bonnes questions — et sans engagement.</p>
+    <form class="cf rv" id="missionForm" novalidate>
+      <div class="duo2">
+        <label>Société<input type="text" name="societe" autocomplete="organization" required></label>
+        <label>Votre nom<input type="text" name="nom" autocomplete="name" required></label>
+      </div>
+      <div class="duo2">
+        <label>E-mail professionnel<input type="email" name="email" autocomplete="email" required></label>
+        <label>Type d'engagement
+          <select name="engagement">
+            <option>Régie — renfort d'équipe</option>
+            <option>Forfait — projet livré</option>
+            <option>Pré-embauche — WizePort</option>
+            <option>Je ne sais pas encore</option>
+          </select>
+        </label>
+      </div>
+      <div class="duo2">
+        <label>Expertise recherchée
+          <select name="expertise" id="pfSelect">
+            <option>GRC &amp; conformité</option>
+            <option>Pentest / offensif</option>
+            <option>Architecture &amp; Cloud</option>
+            <option>SOC &amp; détection</option>
+            <option>IA &amp; data privacy</option>
+            <option>IT &amp; gestion de projet</option>
+            <option>Autre / plusieurs</option>
+          </select>
+        </label>
+        <label>Démarrage souhaité
+          <select name="demarrage">
+            <option>Dès que possible</option>
+            <option>Sous 1 à 2 mois</option>
+            <option>Ce trimestre</option>
+            <option>J'anticipe</option>
+          </select>
+        </label>
+      </div>
+      <label>Joindre la mission (PDF, Word, image)<input type="file" name="mission_file" required accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"></label>
+      <label class="hp" aria-hidden="true" tabindex="-1">Ne pas remplir<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      <button class="btn st" type="submit">Envoyer la demande <span class="ar">→</span></button>
+      <p id="formok" role="status">Votre mission a bien été reçue. Un e-mail de confirmation vous a été envoyé — notre équipe revient vers vous avec les profils correspondants dans les meilleurs délais.</p>
+      <p class="note">En envoyant cette demande, les profils correspondants de notre CVthèque vous sont présentés directement ci-dessous, classés par pertinence.</p>
+    </form>
+    <p id="matchStatus" role="status" aria-live="polite"></p>
+    <div id="matchResults" class="match-results"></div>
+  </div>
+</section>
+</main>
+
+<div id="band-bottom" class="band" aria-label="Modes d'engagement">
+  <div class="track">
+    <div class="set"><span class="it">Régie</span><span class="it">Forfait</span><span class="it">Pré-embauche — WizePort</span><span class="it">Shortlist resserrée</span><span class="it">Qualifié par des pairs</span><span class="it">Premier retour ≤ 2 j ouvrés</span><span class="it">Luxembourg · Belgique · France</span></div>
+    <div class="set" aria-hidden="true"><span class="it">Régie</span><span class="it">Forfait</span><span class="it">Pré-embauche — WizePort</span><span class="it">Shortlist resserrée</span><span class="it">Qualifié par des pairs</span><span class="it">Premier retour ≤ 2 j ouvrés</span><span class="it">Luxembourg · Belgique · France</span></div>
+    <div class="set" aria-hidden="true"><span class="it">Régie</span><span class="it">Forfait</span><span class="it">Pré-embauche — WizePort</span><span class="it">Shortlist resserrée</span><span class="it">Qualifié par des pairs</span><span class="it">Premier retour ≤ 2 j ouvrés</span><span class="it">Luxembourg · Belgique · France</span></div>
+    <div class="set" aria-hidden="true"><span class="it">Régie</span><span class="it">Forfait</span><span class="it">Pré-embauche — WizePort</span><span class="it">Shortlist resserrée</span><span class="it">Qualifié par des pairs</span><span class="it">Premier retour ≤ 2 j ouvrés</span><span class="it">Luxembourg · Belgique · France</span></div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="in">
+      <div>
+        <p class="fwm">WIZE<b>SOURCE</b></p>
+        <p style="margin-top:8px">Sourcing &amp; placement d'experts cyber, IT &amp; IA.<br>Luxembourg · Belgique · France</p>
+      </div>
+      <div>
+        <p style="font-family:var(--pm);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;color:var(--ink50)">Écosystème</p>
+        <p><a href="wizetech.html">WizeTech — la maison mère</a><br><a href="wizecrew.html">WizeCrew — rejoindre l'équipage</a><br><a href="wizeport.html">WizePort — portage salarial</a><br><a href="mailto:contact@wizetech.lu">contact@wizetech.lu</a></p>
+      </div>
+    </div>
+    <div class="legal">
+      <span>© 2026 WizeSource est une marque de WizeTech S.à r.l. — 14-16, Avenue Pasteur, L-2310 Luxembourg · TVA : LU37524925</span>
+      <span style="display:flex;gap:18px;flex-wrap:wrap">
+        <button data-dlg="dlg-mentions">Mentions légales</button>
+        <button data-dlg="dlg-privacy">Confidentialité</button>
+        <span>Site sans cookies ni traceurs</span>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<dialog id="dlg-mentions" aria-labelledby="dlg-m-t">
+  <div class="dhead"><h3 id="dlg-m-t">Mentions légales</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
+  <div class="dbody">
+    <p><b>Éditeur :</b> WizeSource, marque de WizeTech S.à r.l., société à responsabilité limitée de droit luxembourgeois. Siège social : 14-16, Avenue Pasteur, L-2310 Luxembourg. TVA intracommunautaire : LU37524925. RCS Luxembourg : numéro à compléter.</p>
+    <p><b>Direction de la publication :</b> Olivier Teixido et Damien Fritsch, gérants. <b>Contact :</b> contact@wizetech.lu. <b>Hébergement :</b> à compléter lors de la mise en ligne.</p>
+    <p><b>Avertissement :</b> les fiches marquées « Démo » illustrent des profils types du réseau ; elles ne constituent ni une promesse de disponibilité ni des références nominatives.</p>
+  </div>
+</dialog>
+<dialog id="dlg-privacy" aria-labelledby="dlg-p-t">
+  <div class="dhead"><h3 id="dlg-p-t">Politique de confidentialité</h3><button class="x" data-close aria-label="Fermer">✕</button></div>
+  <div class="dbody">
+    <p><b>Pas de cookies, pas de traceurs :</b> ce site ne dépose aucun cookie et n'embarque aucun outil de mesure d'audience. Le formulaire prépare un e-mail depuis votre messagerie ; aucune donnée n'est stockée sur ce site.</p>
+    <p><b>Demandes :</b> les informations transmises sont utilisées uniquement pour instruire votre besoin et ne sont ni cédées ni exploitées à d'autres fins. Droits RGPD : contact@wizetech.lu. Autorité de contrôle : CNPD (Luxembourg).</p>
+  </div>
+</dialog>
+
+<script>
+(function(){
+"use strict";
+var RM = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (RM) document.body.classList.add("rm");
+var $=function(s,c){return (c||document).querySelector(s)};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+
+/* Progress + header */
+var progress=$("#progress"), topbar=$("#topbar");
+function onScroll(){
+  var h=document.documentElement, max=h.scrollHeight-h.clientHeight;
+  progress.style.width=(max>0?h.scrollTop/max*100:0)+"%";
+  document.documentElement.style.setProperty("--hh", topbar.offsetHeight+"px");
+}
+document.addEventListener("scroll",onScroll,{passive:true}); onScroll();
+addEventListener("load",function(){ $("#hero").classList.add("go"); });
+if(RM) $("#hero").classList.add("go");
+
+/* Révélations */
+var io=new IntersectionObserver(function(es){
+  es.forEach(function(en){
+    if(!en.isIntersecting) return;
+    var el=en.target, d=parseInt(el.dataset.d||"0",10);
+    setTimeout(function(){el.classList.add("in");},RM?0:d);
+    io.unobserve(el);
+  });
+},{threshold:.15});
+$$(".rv").forEach(function(el){io.observe(el);});
+
+/* Radar de sourcing (héro) */
+var cv=$("#radar");
+if(cv && !RM){
+  var ctx=cv.getContext("2d"),W=0,H=0,t=0,blips=[];
+  function size(){var r=cv.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+  size(); addEventListener("resize",size);
+  for(var i=0;i<7;i++)blips.push({a:Math.random()*Math.PI*2,r:.25+Math.random()*.65,p:0});
+  (function draw(){
+    t+=.008;
+    ctx.clearRect(0,0,W,H);
+    var cx=W/2,cy=H/2,R=Math.min(W,H)*.46;
+    ctx.strokeStyle="rgba(25,133,161,.4)";ctx.lineWidth=1;
+    for(var k=1;k<=4;k++){ctx.beginPath();ctx.arc(cx,cy,R*k/4,0,Math.PI*2);ctx.stroke();}
+    ctx.beginPath();ctx.moveTo(cx-R,cy);ctx.lineTo(cx+R,cy);ctx.moveTo(cx,cy-R);ctx.lineTo(cx,cy+R);
+    ctx.strokeStyle="rgba(25,133,161,.25)";ctx.stroke();
+    /* balayage */
+    var ang=t%(Math.PI*2);
+    var grad=ctx.createConicGradient ? ctx.createConicGradient(ang,cx,cy) : null;
+    if(grad){
+      grad.addColorStop(0,"rgba(63,178,206,.28)");
+      grad.addColorStop(.12,"rgba(63,178,206,0)");
+      grad.addColorStop(1,"rgba(63,178,206,0)");
+      ctx.fillStyle=grad;
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fill();
+    }
+    ctx.strokeStyle="rgba(63,178,206,.75)";ctx.lineWidth=1.4;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(ang)*R,cy+Math.sin(ang)*R);ctx.stroke();
+    /* échos détectés */
+    blips.forEach(function(b){
+      var bx=cx+Math.cos(b.a)*R*b.r, by=cy+Math.sin(b.a)*R*b.r;
+      var da=((ang-b.a)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
+      if(da<.06)b.p=1;
+      if(b.p>0){
+        ctx.fillStyle="rgba(6,249,190,"+(b.p*.95)+")";
+        ctx.fillRect(bx-2.2,by-2.2,4.4,4.4);
+        ctx.strokeStyle="rgba(6,249,190,"+(b.p*.4)+")";
+        ctx.strokeRect(bx-7,by-7,14,14);
+        b.p-=.006;
+      }
+    });
+    ctx.fillStyle="rgba(63,178,206,.9)";ctx.fillRect(cx-2,cy-2,4,4);
+    requestAnimationFrame(draw);
+  })();
+}
+
+/* Menu mobile */
+var burger=$("#burger"),mob=$("#mobmenu");
+burger.addEventListener("click",function(){
+  var open=mob.classList.toggle("open");
+  burger.classList.toggle("open",open);
+  burger.setAttribute("aria-expanded",open?"true":"false");
+});
+$$("#mobmenu a").forEach(function(a){a.addEventListener("click",function(){mob.classList.remove("open");burger.classList.remove("open");burger.setAttribute("aria-expanded","false");});});
+
+/* Filtres profils */
+var pfs=$$("#pfGrid .pf"), jc=$("#jcount");
+function pfCount(){var v=pfs.filter(function(x){return x.style.display!=="none";}).length;jc.textContent="// "+v+" profil"+(v>1?"s":"")+" affiché"+(v>1?"s":"")+" — démonstration";}
+$$(".fbtn").forEach(function(b){
+  b.addEventListener("click",function(){
+    $$(".fbtn").forEach(function(x){x.classList.remove("on");});
+    b.classList.add("on");
+    var f=b.dataset.f;
+    pfs.forEach(function(x){x.style.display=(f==="all"||x.dataset.cat===f)?"":"none";});
+    pfCount();
+  });
+});
+pfCount();
+
+/* Profil → préremplit le formulaire mission */
+var mapPf={"Consultant·e GRC senior":"GRC & conformité","Pentester certifié·e":"Pentest / offensif","Architecte sécurité Cloud":"Architecture & Cloud","Analyste SOC & détection":"SOC & détection","Expert·e IA & data privacy":"IA & data privacy","Chef·fe de projet IT":"IT & gestion de projet"};
+$$(".ask").forEach(function(b){
+  b.addEventListener("click",function(){
+    var target=mapPf[b.dataset.pf]||"Autre / plusieurs", sel=$("#pfSelect");
+    for(var i=0;i<sel.options.length;i++){ if(sel.options[i].text.replace("&amp;","&")===target){sel.selectedIndex=i;break;} }
+    document.getElementById("mission").scrollIntoView({behavior:RM?"auto":"smooth"});
+  });
+});
+
+/* Formulaire -> matching de candidats via l'API backend */
+var API_BASE = "https://projet-cv-theque-intelligent.onrender.com";
+var form=$("#missionForm");
+var matchResults=$("#matchResults");
+var matchStatus=$("#matchStatus");
+
+function escHtml(s){
+  return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+
+function scoreClass(score){
+  if(score>=70) return "high";
+  if(score>=40) return "mid";
+  return "low";
+}
+
+function renderMatches(resultats){
+  matchResults.innerHTML="";
+  if(!resultats||resultats.length===0){
+    matchStatus.className="show";
+    matchStatus.textContent="Aucun profil ne correspond pour le moment — revenez bientôt, la CVthèque s'enrichit en continu.";
+    return;
+  }
+  matchStatus.className="";
+  resultats.forEach(function(c){
+    var card=document.createElement("div");
+    card.className="match-card";
+    var contactBits=[];
+    if(c.email) contactBits.push('<a href="mailto:'+escHtml(c.email)+'">'+escHtml(c.email)+'</a>');
+    if(c.telephone) contactBits.push(escHtml(c.telephone));
+    var tagsHtml=(c.competences||[]).slice(0,8).map(function(t){return "<span>"+escHtml(t)+"</span>";}).join("");
+    card.innerHTML=
+      '<div class="mc-top">'+
+        '<div><h4>'+escHtml(c.prenom)+' '+escHtml(c.nom)+'</h4>'+
+        '<div class="mc-poste">'+escHtml(c.poste_vise||"")+'</div></div>'+
+        '<span class="mc-score '+scoreClass(c.score)+'">'+c.score+'/100</span>'+
+      '</div>'+
+      (contactBits.length?'<div class="mc-contact">'+contactBits.join(" · ")+'</div>':'')+
+      (c.justification?'<div class="mc-justif">'+escHtml(c.justification)+'</div>':'')+
+      (tagsHtml?'<div class="mc-tags">'+tagsHtml+'</div>':'');
+    matchResults.appendChild(card);
+  });
+}
+
+var submitBtn=form.querySelector('button[type="submit"]');
+var currentRequest=null; // AbortController de la requête en cours, s'il y en a une
+var progressTimer=null;
+
+function stopProgressTimer(){
+  if(progressTimer){clearInterval(progressTimer);progressTimer=null;}
+}
+
+function setFormBusy(busy){
+  submitBtn.disabled=busy;
+  submitBtn.style.opacity=busy?"0.55":"";
+  submitBtn.style.cursor=busy?"not-allowed":"";
+}
+
+form.addEventListener("submit",function(e){
+  e.preventDefault();
+  if(form.website.value) return;
+  if(!form.societe.value||!form.email.value||!form.mission_file.files.length){form.reportValidity();return;}
+
+  // Si une recherche précédente est encore en cours, on l'annule proprement
+  // avant d'en lancer une nouvelle (évite l'empilement de requêtes
+  // concurrentes qui ralentit tout le monde, Ollama ne traitant qu'une
+  // génération à la fois).
+  if(currentRequest){currentRequest.abort();}
+  stopProgressTimer();
+
+  var controller=new AbortController();
+  currentRequest=controller;
+
+  // FormData (multipart) obligatoire ici : un fichier ne peut pas être
+  // encodé en JSON classique. Ne PAS fixer manuellement le header
+  // Content-Type -> le navigateur le génère lui-même avec le bon
+  // "boundary" multipart, indispensable pour que le serveur parse le corps
+  // de la requête correctement.
+  var formData=new FormData();
+  formData.append("societe",form.societe.value);
+  formData.append("nom",form.nom.value);
+  formData.append("email",form.email.value);
+  formData.append("engagement",form.engagement.value);
+  formData.append("expertise",form.expertise.value);
+  formData.append("demarrage",form.demarrage.value);
+  formData.append("mission_file",form.mission_file.files[0]);
+
+  matchResults.innerHTML="";
+  matchStatus.className="show";
+  $("#formok").classList.remove("show");
+  setFormBusy(true);
+  matchStatus.textContent="Envoi de votre mission en cours…";
+
+  fetch(API_BASE+"/api/v1/missions/soumettre",{
+    method:"POST",
+    body:formData,
+    signal:controller.signal
+  })
+  .then(function(r){
+    if(!r.ok) return r.json().then(function(err){throw new Error(err.detail||("Erreur serveur ("+r.status+")"));});
+    return r.json();
+  })
+  .then(function(data){
+    matchStatus.className="";
+    $("#formok").classList.add("show");
+    form.reset();
+  })
+  .catch(function(err){
+    if(err.name==="AbortError") return; // requête annulée volontairement (nouvelle soumission), pas une vraie erreur
+    matchStatus.className="show err";
+    matchStatus.textContent="Une erreur est survenue lors de l'envoi de votre mission ("+err.message+"). Réessayez, ou contactez-nous directement à contact@wizetech.lu.";
+  })
+  .finally(function(){
+    stopProgressTimer();
+    if(currentRequest===controller){
+      setFormBusy(false);
+      currentRequest=null;
+    }
+  });
+});
+
+/* Dialogs */
+$$("[data-dlg]").forEach(function(b){b.addEventListener("click",function(){var d=document.getElementById(b.dataset.dlg);if(d&&d.showModal)d.showModal();});});
+$$("dialog").forEach(function(d){
+  d.querySelector("[data-close]").addEventListener("click",function(){d.close();});
+  d.addEventListener("click",function(e){if(e.target===d)d.close();});
+});
+})();
+</script>
+</body>
+</html>

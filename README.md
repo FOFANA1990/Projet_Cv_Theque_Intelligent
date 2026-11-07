@@ -1,3 +1,6 @@
+title: CV Extraction API emoji: 📄 colorFrom: blue colorTo: green sdk: docker app_port: 7860 pinned: false
+(votre README.md existant continue ici, inchangé)
+
 # CV-Thèque Intelligente — API Backend
 
 API FastAPI qui reçoit des CV depuis un formulaire HTML, extrait les informations

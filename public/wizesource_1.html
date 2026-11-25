@@ -261,6 +261,7 @@ section.sec{scroll-margin-top:calc(var(--hh,66px) + 62px)}
 footer{padding-bottom:88px}
 @media (max-width:640px){.band{padding:13px 0}.band .it{font-size:.8rem;padding:0 16px;gap:16px}}
 </style>
+<script>(function(){try{if(sessionStorage.getItem("token")&&sessionStorage.getItem("role")==="recruteur")return;}catch(e){}location.replace("/espace?role=recruteur&next=%2Fmissions");})();</script>
 </head>
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
@@ -435,7 +436,6 @@ footer{padding-bottom:88px}
       </div>
       <div class="duo2">
         <label>E-mail professionnel<input type="email" name="email" autocomplete="email" required></label>
-      <label>Mot de passe (crée votre compte, ou le même qu'avant)<input type="password" name="mot_de_passe" autocomplete="new-password" minlength="8" required placeholder="8 caractères minimum"></label>
         <label>Type d'engagement
           <select name="engagement">
             <option>Régie — renfort d'équipe</option>
@@ -694,10 +694,11 @@ function setFormBusy(busy){
   submitBtn.style.cursor=busy?"not-allowed":"";
 }
 
+try{var _em=sessionStorage.getItem("email")||"";if(_em){form.email.value=_em;form.email.readOnly=true;}}catch(e){}
 form.addEventListener("submit",function(e){
   e.preventDefault();
   if(form.website.value) return;
-  if(!form.societe.value||!form.email.value||!form.mot_de_passe.value||!form.mission_file.files.length){form.reportValidity();return;}
+  if(!form.societe.value||!form.email.value||!form.mission_file.files.length){form.reportValidity();return;}
 
   // Si une recherche précédente est encore en cours, on l'annule proprement
   // avant d'en lancer une nouvelle (évite l'empilement de requêtes
@@ -718,7 +719,6 @@ form.addEventListener("submit",function(e){
   formData.append("societe",form.societe.value);
   formData.append("nom",form.nom.value);
   formData.append("email",form.email.value);
-  formData.append("mot_de_passe",form.mot_de_passe.value);
   formData.append("engagement",form.engagement.value);
   formData.append("expertise",form.expertise.value);
   formData.append("demarrage",form.demarrage.value);
@@ -732,10 +732,12 @@ form.addEventListener("submit",function(e){
 
   fetch(API_BASE+"/api/v1/missions/soumettre",{
     method:"POST",
+    headers:{"Authorization":"Bearer "+(function(){try{return sessionStorage.getItem("token")||"";}catch(e){return "";}})()},
     body:formData,
     signal:controller.signal
   })
   .then(function(r){
+    if(r.status===401){try{sessionStorage.clear();}catch(x){} location.replace("/espace?role=recruteur&next=%2Fmissions");}
     if(!r.ok) return r.json().then(function(err){var e=new Error(err.detail||("Erreur serveur ("+r.status+")")); e.info=(r.status===403); throw e;});
     return r.json();
   })

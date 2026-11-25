@@ -215,7 +215,7 @@ def authenticate_or_create(db: Session, email: str, password: str, role: str) ->
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Compte créé. Un e-mail de confirmation vient d'être envoyé à {email} : "
-                   "cliquez sur le lien qu'il contient, puis renvoyez ce formulaire.",
+                   "cliquez sur le lien qu'il contient, puis connectez-vous.",
         )
 
     if not verify_password(password or "", compte.mot_de_passe_hash):
@@ -231,7 +231,7 @@ def authenticate_or_create(db: Session, email: str, password: str, role: str) ->
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f"Adresse e-mail pas encore confirmée. Ouvrez le lien envoyé à {email} "
-                   "(un nouveau lien vient de vous être envoyé si besoin), puis renvoyez ce formulaire.",
+                   "(un nouveau lien vient de vous être envoyé si besoin), puis connectez-vous.",
         )
     return compte
 
@@ -400,3 +400,35 @@ def supprimer_compte(compte: Compte = Depends(get_current_compte), db: Session =
     db.delete(compte)
     db.commit()
     return {"supprime": True}
+
+
+def authorize_deposit(db: Session, email: str, mot_de_passe: str, role: str, authorization: str = "") -> Compte:
+    """
+    Autorise un dépôt (CV ou mission). Cas normal : le visiteur est connecté
+    (en-tête Authorization: Bearer ...) et l'e-mail du formulaire est celui de
+    son compte. Repli : e-mail + mot de passe dans le formulaire.
+    """
+    if authorization.strip():
+        compte = get_current_compte(authorization, db)
+        if compte.role != role:
+            raise HTTPException(status_code=403, detail=f"Ce dépôt est réservé aux comptes « {role} ».")
+        if compte.email != normalize_email(email):
+            raise HTTPException(status_code=403, detail="L'e-mail du formulaire doit être celui de votre compte connecté.")
+        return compte
+    return authenticate_or_create(db, email, mot_de_passe, role)
+
+
+@router.post("/auth/inscription", summary="Créer un compte (un e-mail de confirmation est envoyé)")
+def inscription(
+    email: str = Form(...),
+    mot_de_passe: str = Form(...),
+    role: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    try:
+        authenticate_or_create(db, email, mot_de_passe, role)
+    except HTTPException as exc:
+        if exc.status_code == 403:  # compte créé / e-mail à confirmer : message d'information
+            return {"ok": True, "message": exc.detail}
+        raise
+    return {"ok": True, "message": "Ce compte existe déjà et est confirmé : connectez-vous."}

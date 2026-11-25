@@ -33,6 +33,10 @@
   .pill.echec{background:rgba(179,69,46,.15);color:var(--clay)}
   .pill.en_cours,.pill.extraction_en_cours{background:rgba(25,133,161,.16);color:#0b5c73}
   .empty{color:var(--ink2);font-family:var(--mono);font-size:.85rem;padding:24px 0;text-align:center}
+  .tabs{display:flex;gap:8px;margin-bottom:18px}
+  .tab{flex:1;padding:10px;border:1px solid var(--line);background:#F4F9FB;cursor:pointer;font:inherit;font-weight:600;color:var(--ink2)}
+  .tab.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .msg.ok{color:#02664e}
   .hidden{display:none}
   a.cta{color:var(--navy);font-weight:600}
 </style>
@@ -45,16 +49,20 @@
 
 <main>
   <section id="loginView">
-    <h1>Connexion</h1>
-    <p class="sub">Utilisez l'e-mail et le mot de passe choisis lors de votre dépôt (CV ou mission).</p>
+    <h1 id="loginTitle">Connexion</h1>
+    <p class="sub" id="loginSub">Connectez-vous pour déposer un CV ou une mission et suivre votre dossier.</p>
     <div class="card">
+      <div class="tabs">
+        <button type="button" id="tabLogin" class="tab on">Se connecter</button>
+        <button type="button" id="tabSignup" class="tab">Créer un compte</button>
+      </div>
       <form id="loginForm">
         <label>Je suis
-          <select id="role"><option value="candidat">Candidat</option><option value="recruteur">Recruteur</option></select>
+          <select id="role"><option value="candidat">Candidat (je dépose un CV)</option><option value="recruteur">Recruteur (je dépose une mission)</option></select>
         </label>
         <label>E-mail<input type="email" id="email" autocomplete="email" required></label>
-        <label>Mot de passe<input type="password" id="mdp" autocomplete="current-password" required></label>
-        <button class="btn" type="submit">Se connecter</button>
+        <label>Mot de passe<input type="password" id="mdp" autocomplete="current-password" required minlength="8"></label>
+        <button class="btn" id="submitBtn" type="submit">Se connecter</button>
       </form>
       <p id="loginMsg" class="msg" role="status"></p>
     </div>
@@ -63,6 +71,7 @@
   <section id="spaceView" class="hidden">
     <h1 id="title"></h1>
     <p class="sub" id="who"></p>
+    <p><a id="depotBtn" class="btn" href="/cv" style="display:inline-block;text-decoration:none">Déposer</a></p>
     <div id="list"></div>
     <p id="spaceMsg" class="msg" role="status"></p>
     <p><button class="btn ghost" id="delAccount" type="button">Supprimer mon compte</button></p>
@@ -91,6 +100,22 @@ function api(path, opts){
   });
 }
 
+var params = new URLSearchParams(location.search);
+var NEXT = params.get("next") || "";
+if(NEXT.charAt(0) !== "/" || NEXT.charAt(1) === "/") NEXT = "";   // redirections internes uniquement
+if(params.get("role") === "recruteur" || params.get("role") === "candidat") $("#role").value = params.get("role");
+var mode = "login";
+function setMode(m){
+  mode = m;
+  $("#tabLogin").classList.toggle("on", m==="login"); $("#tabSignup").classList.toggle("on", m==="signup");
+  $("#submitBtn").textContent = m==="login" ? "Se connecter" : "Créer mon compte";
+  $("#loginTitle").textContent = m==="login" ? "Connexion" : "Créer un compte";
+  $("#mdp").setAttribute("autocomplete", m==="login" ? "current-password" : "new-password");
+  $("#loginMsg").textContent = "";
+}
+$("#tabLogin").addEventListener("click", function(){ setMode("login"); });
+$("#tabSignup").addEventListener("click", function(){ setMode("signup"); });
+
 function logout(){
   store("token",null); store("role",null); store("email",null);
   $("#spaceView").classList.add("hidden"); $("#loginView").classList.remove("hidden");
@@ -105,6 +130,8 @@ function show(){
   $("#who").textContent = "Connecté : " + email;
   $("#depot").setAttribute("href", role==="recruteur" ? "/missions" : "/cv");
   $("#depot").textContent = role==="recruteur" ? "Déposer une mission" : "Déposer un CV";
+  $("#depotBtn").setAttribute("href", role==="recruteur" ? "/missions" : "/cv");
+  $("#depotBtn").textContent = role==="recruteur" ? "Déposer une mission →" : "Déposer un CV →";
   refresh();
 }
 
@@ -148,18 +175,29 @@ $("#loginForm").addEventListener("submit", function(e){
   fd.append("email",$("#email").value.trim());
   fd.append("mot_de_passe",$("#mdp").value);
   fd.append("role",$("#role").value);
-  $("#loginMsg").className="msg"; $("#loginMsg").textContent="Connexion…";
-  fetch(API_BASE+"/api/v1/auth/login",{method:"POST",body:fd}).then(function(r){
+  var msg = $("#loginMsg");
+  msg.className="msg"; msg.textContent = mode==="login" ? "Connexion…" : "Création du compte…";
+  var url = API_BASE + (mode==="login" ? "/api/v1/auth/login" : "/api/v1/auth/inscription");
+  fetch(url,{method:"POST",body:fd}).then(function(r){
     return r.json().catch(function(){return {};}).then(function(d){
-      if(!r.ok) throw new Error(d.detail||("Erreur ("+r.status+")"));
+      if(!r.ok){
+        var detail = d.detail;
+        if(Array.isArray(detail)) detail = "Vérifiez les champs saisis (mot de passe : 8 caractères minimum).";
+        throw new Error(detail||("Erreur ("+r.status+")"));
+      }
+      if(mode==="signup"){
+        msg.className="msg ok"; msg.textContent = d.message + " Après confirmation, revenez ici pour vous connecter.";
+        return;
+      }
       store("token",d.token); store("role",d.role); store("email",d.email);
-      $("#mdp").value=""; $("#loginMsg").textContent="";
+      $("#mdp").value=""; msg.textContent="";
+      if(NEXT){ location.replace(NEXT); return; }
       show();
     });
-  }).catch(function(err){ $("#loginMsg").className="msg err"; $("#loginMsg").textContent=err.message; });
+  }).catch(function(err){ msg.className="msg err"; msg.textContent=err.message; });
 });
 
-if(load("token")) show();
+if(load("token")){ if(NEXT && load("role")===(params.get("role")||load("role"))){ location.replace(NEXT); } else { show(); } }
 </script>
 </body>
 </html>

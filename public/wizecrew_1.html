@@ -269,6 +269,7 @@ section.sec{scroll-margin-top:calc(var(--hh,66px) + 62px)}
 footer{padding-bottom:88px}
 @media (max-width:640px){.band{padding:13px 0}.band .it{font-size:.8rem;padding:0 16px;gap:16px}}
 </style>
+<script>(function(){try{if(sessionStorage.getItem("token")&&sessionStorage.getItem("role")==="candidat")return;}catch(e){}location.replace("/espace?role=candidat&next=%2Fcv");})();</script>
 </head>
 <body>
 <a class="skip" href="#main">Aller au contenu</a>
@@ -428,7 +429,7 @@ footer{padding-bottom:88px}
       <label>Nom<input type="text" id="candNom" name="nom" required autocomplete="family-name"></label>
     </div>
     <label class="rv">E-mail<input type="email" id="candEmail" name="email" required autocomplete="email" placeholder="vous@exemple.com"></label>
-    <label class="rv">Mot de passe <small>(crée votre compte, ou le même qu'avant — 8 caractères minimum)</small><input type="password" id="candMdp" name="mot_de_passe" required minlength="8" autocomplete="new-password"></label>
+    <p class="note rv" id="whoami"></p>
 
     <div class="drop rv" id="drop" role="button" tabindex="0" aria-label="Déposer votre CV — cliquez ou glissez le fichier ici">
       <svg viewBox="0 0 46 46" fill="none" aria-hidden="true"><path d="M10 6h17l9 9v25H10z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M27 6v9h9" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M17.5 27.5l5.5-5.5 5.5 5.5M23 22.5V35" stroke="#049e79" stroke-width="2.6" stroke-linecap="square"/></svg>
@@ -625,8 +626,10 @@ $$(".fbtn").forEach(function(b){
 refreshCount();
 
 /* ---------- Dépôt express du CV (clic ou glisser-déposer) ---------- */
+function escHtmlEarly(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 var drop=$("#drop"), cvFile=$("#cvFile"), consent=$("#consent"), poste="";
-var candPrenom=$("#candPrenom"), candNom=$("#candNom"), candEmail=$("#candEmail"), candMdp=$("#candMdp");
+var candPrenom=$("#candPrenom"), candNom=$("#candNom"), candEmail=$("#candEmail");
+var TOKEN=""; try{TOKEN=sessionStorage.getItem("token")||"";candEmail.value=sessionStorage.getItem("email")||"";candEmail.readOnly=true;$("#whoami").innerHTML="Connecté : "+escHtmlEarly(candEmail.value)+" · <a href=\"/espace\">Mon espace</a>";}catch(e){}
 function showFile(){
   if(cvFile.files.length){
     drop.classList.add("haz"); drop.classList.remove("err");
@@ -641,8 +644,6 @@ function resetDropForm(){
   $("#dropSub").textContent = "PDF, Word (.docx) ou image (JPG/PNG) · 10 Mo max · c'est le seul champ à remplir";
   candPrenom.value = "";
   candNom.value = "";
-  candEmail.value = "";
-  candMdp.value = "";
   consent.checked = false;
 }
 drop.addEventListener("click",function(){ cvFile.click(); });
@@ -685,14 +686,14 @@ function setSendBusy(busy){
 }
 
 $("#sendCv").addEventListener("click",function(){
-  if(!candPrenom.value.trim() || !candNom.value.trim() || !candEmail.value.trim() || !candEmail.checkValidity() || candMdp.value.length < 8){
-    var champEnErreur = !candPrenom.value.trim() ? candPrenom : (!candNom.value.trim() ? candNom : (!candEmail.value.trim() || !candEmail.checkValidity() ? candEmail : candMdp));
+  if(!candPrenom.value.trim() || !candNom.value.trim() || !candEmail.value.trim() || !candEmail.checkValidity()){
+    var champEnErreur = !candPrenom.value.trim() ? candPrenom : (!candNom.value.trim() ? candNom : candEmail);
     champEnErreur.style.borderColor = "#C0392B";
     champEnErreur.focus();
     champEnErreur.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"});
     return;
   }
-  candPrenom.style.borderColor = ""; candNom.style.borderColor = ""; candEmail.style.borderColor = ""; candMdp.style.borderColor = "";
+  candPrenom.style.borderColor = ""; candNom.style.borderColor = ""; candEmail.style.borderColor = "";
 
   if(!cvFile.files.length){
     drop.classList.add("err");
@@ -714,7 +715,6 @@ $("#sendCv").addEventListener("click",function(){
   formData.append("prenom", candPrenom.value.trim());
   formData.append("nom", candNom.value.trim());
   formData.append("email", candEmail.value.trim());
-  formData.append("mot_de_passe", candMdp.value);
   formData.append("file", cvFile.files[0]);
   // NB : le poste visé mémorisé (bouton "Postuler" sur une fiche) n'est pas
   // transmis ici — l'API extrait le poste visé directement depuis le texte
@@ -728,10 +728,12 @@ $("#sendCv").addEventListener("click",function(){
 
   fetch(API_BASE+"/api/v1/cv/upload",{
     method:"POST",
+    headers:{"Authorization":"Bearer "+TOKEN},
     body:formData,
     signal:controller.signal
   })
   .then(function(r){
+    if(r.status===401){ try{sessionStorage.clear();}catch(x){} location.replace("/espace?role=candidat&next=%2Fcv"); }
     if(!r.ok) return r.json().then(function(err){ var e = new Error(err.detail || ("Erreur serveur ("+r.status+")")); e.info = (r.status === 403); throw e; });
     return r.json();
   })

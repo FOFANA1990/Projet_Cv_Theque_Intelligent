@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon espace — WizeTech</title>
+<style>
+  :root{--navy:#002A3F;--deep:#001824;--cyan:#00E7FF;--mint:#06F9BE;--ink:#0F172A;--ink2:#4A5B66;--line:rgba(0,42,63,.16);--bg:#EAF3F6;--clay:#B3452E;
+    --sans:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;--mono:"IBM Plex Mono",Consolas,monospace}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+  header{background:var(--deep);color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  header b{letter-spacing:.05em}
+  header a,header button{color:var(--cyan);font:inherit;font-size:.85rem;background:none;border:1px solid rgba(0,231,255,.5);padding:7px 12px;cursor:pointer;text-decoration:none}
+  main{max-width:760px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:1.4rem;margin:0 0 6px}
+  .sub{color:var(--ink2);margin:0 0 24px}
+  .card{background:#fff;border:1px solid var(--line);padding:24px}
+  form{display:grid;gap:14px}
+  label{display:grid;gap:6px;font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+  input,select{font-family:var(--sans);font-size:.95rem;padding:11px 13px;border:1px solid var(--line);background:#F4F9FB;width:100%}
+  input:focus,select:focus{outline:2px solid var(--navy);outline-offset:-1px}
+  .btn{font-weight:600;font-size:.9rem;padding:12px 20px;border:0;background:var(--navy);color:#fff;cursor:pointer;justify-self:start}
+  .btn:hover{background:#014A66}
+  .btn.ghost{background:none;color:var(--clay);border:1px solid var(--line);padding:7px 12px;font-size:.8rem}
+  .msg{font-family:var(--mono);font-size:.8rem;margin-top:12px;min-height:1.2em}
+  .msg.err{color:var(--clay)}
+  .item{background:#fff;border:1px solid var(--line);padding:16px 18px;margin-bottom:10px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}
+  .item h3{margin:0 0 3px;font-size:1rem}
+  .meta{font-family:var(--mono);font-size:.74rem;color:var(--ink2)}
+  .pill{font-family:var(--mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;background:rgba(0,42,63,.08);margin-left:6px}
+  .pill.terminee{background:rgba(6,249,190,.25);color:#02664e}
+  .pill.echec{background:rgba(179,69,46,.15);color:var(--clay)}
+  .pill.en_cours,.pill.extraction_en_cours{background:rgba(25,133,161,.16);color:#0b5c73}
+  .empty{color:var(--ink2);font-family:var(--mono);font-size:.85rem;padding:24px 0;text-align:center}
+  .hidden{display:none}
+  a.cta{color:var(--navy);font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <b>WIZETECH · Mon espace</b>
+  <span><a id="depot" href="/cv">Déposer</a> <button id="logout" class="hidden" type="button">Se déconnecter</button></span>
+</header>
+
+<main>
+  <section id="loginView">
+    <h1>Connexion</h1>
+    <p class="sub">Utilisez l'e-mail et le mot de passe choisis lors de votre dépôt (CV ou mission).</p>
+    <div class="card">
+      <form id="loginForm">
+        <label>Je suis
+          <select id="role"><option value="candidat">Candidat</option><option value="recruteur">Recruteur</option></select>
+        </label>
+        <label>E-mail<input type="email" id="email" autocomplete="email" required></label>
+        <label>Mot de passe<input type="password" id="mdp" autocomplete="current-password" required></label>
+        <button class="btn" type="submit">Se connecter</button>
+      </form>
+      <p id="loginMsg" class="msg" role="status"></p>
+    </div>
+  </section>
+
+  <section id="spaceView" class="hidden">
+    <h1 id="title"></h1>
+    <p class="sub" id="who"></p>
+    <div id="list"></div>
+    <p id="spaceMsg" class="msg" role="status"></p>
+    <p><button class="btn ghost" id="delAccount" type="button">Supprimer mon compte</button></p>
+  </section>
+</main>
+
+<script>
+var API_BASE = window.location.origin;
+var $ = function(s){ return document.querySelector(s); };
+var STATUTS = {en_attente:"En attente", extraction_en_cours:"Analyse en cours", en_cours:"En cours", terminee:"Traité", echec:"Échec de l'analyse"};
+
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+function fmt(iso){ try{ return new Date(iso).toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}); }catch(e){ return iso; } }
+function store(k,v){ try{ if(v===null) sessionStorage.removeItem(k); else sessionStorage.setItem(k,v); }catch(e){} }
+function load(k){ try{ return sessionStorage.getItem(k)||""; }catch(e){ return ""; } }
+
+function api(path, opts){
+  opts = opts || {};
+  opts.headers = Object.assign({"Authorization":"Bearer "+load("token")}, opts.headers||{});
+  return fetch(API_BASE+path, opts).then(function(r){
+    return r.json().catch(function(){return {};}).then(function(d){
+      if(r.status===401){ logout(); throw new Error(d.detail||"Session expirée."); }
+      if(!r.ok) throw new Error(d.detail||("Erreur ("+r.status+")"));
+      return d;
+    });
+  });
+}
+
+function logout(){
+  store("token",null); store("role",null); store("email",null);
+  $("#spaceView").classList.add("hidden"); $("#loginView").classList.remove("hidden");
+  $("#logout").classList.add("hidden");
+}
+
+function show(){
+  var role = load("role"), email = load("email");
+  $("#loginView").classList.add("hidden"); $("#spaceView").classList.remove("hidden");
+  $("#logout").classList.remove("hidden");
+  $("#title").textContent = role==="recruteur" ? "Mes missions" : "Mes CV";
+  $("#who").textContent = "Connecté : " + email;
+  $("#depot").setAttribute("href", role==="recruteur" ? "/missions" : "/cv");
+  $("#depot").textContent = role==="recruteur" ? "Déposer une mission" : "Déposer un CV";
+  refresh();
+}
+
+function refresh(){
+  var role = load("role");
+  var list = $("#list"); list.innerHTML = '<p class="empty">Chargement…</p>'; $("#spaceMsg").textContent="";
+  api(role==="recruteur" ? "/api/v1/me/missions" : "/api/v1/me/cv").then(function(items){
+    if(!items.length){
+      list.innerHTML = '<p class="empty">Rien pour le moment. <a class="cta" href="'+(role==="recruteur"?"/missions":"/cv")+'">Faire un dépôt</a></p>';
+      return;
+    }
+    list.innerHTML = items.map(function(it){
+      var titre = role==="recruteur" ? esc(it.societe)+' — '+esc(it.expertise) : esc(it.nom_fichier);
+      var meta = role==="recruteur" ? esc(it.engagement||"—")+' · '+fmt(it.date_reception) : esc(it.poste_vise||"Poste visé en cours d'analyse")+' · '+fmt(it.date_reception);
+      return '<div class="item"><div><h3>'+titre+'<span class="pill '+esc(it.statut)+'">'+esc(STATUTS[it.statut]||it.statut)+'</span></h3><div class="meta">'+meta+'</div></div>'+
+             '<button class="btn ghost" data-del="'+esc(it.id)+'">Supprimer</button></div>';
+    }).join("");
+  }).catch(function(e){ list.innerHTML=""; $("#spaceMsg").className="msg err"; $("#spaceMsg").textContent=e.message; });
+}
+
+$("#list").addEventListener("click", function(e){
+  var id = e.target.getAttribute && e.target.getAttribute("data-del");
+  if(!id) return;
+  if(!confirm("Supprimer définitivement cet élément et ses données ?")) return;
+  var role = load("role");
+  api((role==="recruteur" ? "/api/v1/me/missions/" : "/api/v1/me/cv/")+id, {method:"DELETE"})
+    .then(refresh)
+    .catch(function(err){ $("#spaceMsg").className="msg err"; $("#spaceMsg").textContent=err.message; });
+});
+
+$("#delAccount").addEventListener("click", function(){
+  if(!confirm("Supprimer votre compte ? (Vos dépôts restent tant que vous ne les supprimez pas.)")) return;
+  api("/api/v1/me",{method:"DELETE"}).then(logout).catch(function(err){ $("#spaceMsg").className="msg err"; $("#spaceMsg").textContent=err.message; });
+});
+
+$("#logout").addEventListener("click", logout);
+
+$("#loginForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var fd = new FormData();
+  fd.append("email",$("#email").value.trim());
+  fd.append("mot_de_passe",$("#mdp").value);
+  fd.append("role",$("#role").value);
+  $("#loginMsg").className="msg"; $("#loginMsg").textContent="Connexion…";
+  fetch(API_BASE+"/api/v1/auth/login",{method:"POST",body:fd}).then(function(r){
+    return r.json().catch(function(){return {};}).then(function(d){
+      if(!r.ok) throw new Error(d.detail||("Erreur ("+r.status+")"));
+      store("token",d.token); store("role",d.role); store("email",d.email);
+      $("#mdp").value=""; $("#loginMsg").textContent="";
+      show();
+    });
+  }).catch(function(err){ $("#loginMsg").className="msg err"; $("#loginMsg").textContent=err.message; });
+});
+
+if(load("token")) show();
+</script>
+</body>
+</html>

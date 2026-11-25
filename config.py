@@ -43,6 +43,13 @@ class Settings(BaseSettings):
 
     ADMIN_API_KEY: str = Field(default="changez-moi-en-dev")
 
+    # Secret de signature des sessions (comptes candidats/recruteurs).
+    # À définir sur Render (ex. 64 caractères aléatoires).
+    JWT_SECRET: str = Field(default="")
+
+    # URL publique du site (liens de confirmation e-mail).
+    PUBLIC_BASE_URL: str = Field(default="https://projet-cv-theque-intelligent.onrender.com")
+
     UPLOAD_TMP_DIR: str = Field(default="./tmp_uploads")
     MAX_UPLOAD_SIZE_MB: int = Field(default=10)
 

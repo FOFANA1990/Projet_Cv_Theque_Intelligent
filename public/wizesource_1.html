@@ -280,7 +280,7 @@ footer{padding-bottom:88px}
       <a class="lnk" href="#methode">La méthode</a>
       <a class="lnk" href="#profils">Profils</a>
       <a class="lnk" href="/cv">WizeCrew</a>
-      <a class="back" href="wizetech.html">← WizeTech</a>
+      <a class="back" href="#">← WizeTech</a>
       <a class="btn st" href="#mission">Confier une mission</a>
     </nav>
     <button id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobmenu"><span></span><span></span><span></span></button>
@@ -291,7 +291,7 @@ footer{padding-bottom:88px}
   <a href="#profils">Profils</a>
   <a href="#mission">Confier une mission</a>
   <a href="/cv">WizeCrew</a>
-  <a class="bk" href="wizetech.html">← Retour sur WizeTech</a>
+  <a class="bk" href="#">← Retour sur WizeTech</a>
 </div>
 
 <main id="main">
@@ -351,7 +351,7 @@ footer{padding-bottom:88px}
         <h3>L'essai avant l'embauche — avec WizePort</h3>
         <p>Vous préférez recruter ? L'expert intervient d'abord chez vous, porté par WizePort, pendant une période d'essai commerciale. Si l'essai est concluant, vous l'embauchez en direct.</p>
       </div>
-      <a class="btn s" href="wizeport.html#passerelle">Découvrir sur WizePort <span class="ar">→</span></a>
+      <a class="btn s" href="#">Découvrir sur WizePort <span class="ar">→</span></a>
     </div>
     <div class="engage rv" aria-label="Nos engagements">
       <div class="eng"><div class="v">≤ 2 j</div><div class="l">ouvrés pour un premier retour sur votre mission</div></div>
@@ -435,6 +435,7 @@ footer{padding-bottom:88px}
       </div>
       <div class="duo2">
         <label>E-mail professionnel<input type="email" name="email" autocomplete="email" required></label>
+      <label>Mot de passe (crée votre compte, ou le même qu'avant)<input type="password" name="mot_de_passe" autocomplete="new-password" minlength="8" required placeholder="8 caractères minimum"></label>
         <label>Type d'engagement
           <select name="engagement">
             <option>Régie — renfort d'équipe</option>
@@ -495,7 +496,7 @@ footer{padding-bottom:88px}
       </div>
       <div>
         <p style="font-family:var(--pm);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;color:var(--ink50)">Écosystème</p>
-        <p><a href="wizetech.html">WizeTech — la maison mère</a><br><a href="/cv">WizeCrew — rejoindre l'équipage</a><br><a href="wizeport.html">WizePort — portage salarial</a><br><a href="mailto:contact@wizetech.lu">contact@wizetech.lu</a></p>
+        <p><a href="#">WizeTech — la maison mère</a><br><a href="/cv">WizeCrew — rejoindre l'équipage</a><br><a href="#">WizePort — portage salarial</a><br><a href="mailto:contact@wizetech.lu">contact@wizetech.lu</a></p>
       </div>
     </div>
     <div class="legal">
@@ -634,7 +635,7 @@ $$(".ask").forEach(function(b){
 });
 
 /* Formulaire -> matching de candidats via l'API backend */
-var API_BASE = "https://projet-cv-theque-intelligent.onrender.com";
+var API_BASE = window.location.origin;
 var form=$("#missionForm");
 var matchResults=$("#matchResults");
 var matchStatus=$("#matchStatus");
@@ -696,7 +697,7 @@ function setFormBusy(busy){
 form.addEventListener("submit",function(e){
   e.preventDefault();
   if(form.website.value) return;
-  if(!form.societe.value||!form.email.value||!form.mission_file.files.length){form.reportValidity();return;}
+  if(!form.societe.value||!form.email.value||!form.mot_de_passe.value||!form.mission_file.files.length){form.reportValidity();return;}
 
   // Si une recherche précédente est encore en cours, on l'annule proprement
   // avant d'en lancer une nouvelle (évite l'empilement de requêtes
@@ -717,6 +718,7 @@ form.addEventListener("submit",function(e){
   formData.append("societe",form.societe.value);
   formData.append("nom",form.nom.value);
   formData.append("email",form.email.value);
+  formData.append("mot_de_passe",form.mot_de_passe.value);
   formData.append("engagement",form.engagement.value);
   formData.append("expertise",form.expertise.value);
   formData.append("demarrage",form.demarrage.value);
@@ -734,7 +736,7 @@ form.addEventListener("submit",function(e){
     signal:controller.signal
   })
   .then(function(r){
-    if(!r.ok) return r.json().then(function(err){throw new Error(err.detail||("Erreur serveur ("+r.status+")"));});
+    if(!r.ok) return r.json().then(function(err){var e=new Error(err.detail||("Erreur serveur ("+r.status+")")); e.info=(r.status===403); throw e;});
     return r.json();
   })
   .then(function(data){
@@ -744,6 +746,7 @@ form.addEventListener("submit",function(e){
   })
   .catch(function(err){
     if(err.name==="AbortError") return; // requête annulée volontairement (nouvelle soumission), pas une vraie erreur
+    if(err.info){matchStatus.className="show";matchStatus.textContent=err.message;return;} // e-mail à confirmer : message d'information
     matchStatus.className="show err";
     matchStatus.textContent="Une erreur est survenue lors de l'envoi de votre mission ("+err.message+"). Réessayez, ou contactez-nous directement à contact@wizetech.lu.";
   })

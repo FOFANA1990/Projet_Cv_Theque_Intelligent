@@ -26,8 +26,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from sqlalchemy.orm import Session, selectinload
 
+from auth import authenticate_or_create, ensure_schema, normalize_email, router as auth_router
 from config import settings
-from database import SessionLocal, get_db, init_db
+from database import SessionLocal, engine, get_db, init_db
 from models import (
     Adresse,
     Candidate,
@@ -94,10 +95,14 @@ app.add_middleware(
 )
 
 
+app.include_router(auth_router)
+
+
 @app.on_event("startup")
 def on_startup() -> None:
     logger.info("Démarrage de %s (env=%s)", settings.APP_NAME, settings.APP_ENV)
     init_db()
+    ensure_schema(engine)
 
 
 def _get_or_create_pays(db: Session, nom: str) -> Pays | None:
@@ -154,6 +159,11 @@ def page_cv():
 @app.get("/missions", include_in_schema=False)
 def page_missions():
     return _page("wizesource_1.html")      # formulaire recruteur
+
+
+@app.get("/espace", include_in_schema=False)
+def page_espace():
+    return _page("espace.html")            # connexion + espace personnel
 
 
 @app.get("/admin", include_in_schema=False)
@@ -274,6 +284,7 @@ async def submit_cv(
     prenom: str = Form(...),
     nom: str = Form(...),
     email: str = Form(...),
+    mot_de_passe: str = Form(...),
     file: UploadFile = File(..., description="Fichier CV (.pdf, .docx, .png, .jpg, .jpeg)"),
     db: Session = Depends(get_db),
 ) -> CVSubmitResponse:
@@ -288,6 +299,11 @@ async def submit_cv(
        (compétences, expériences...), en tâche de fond
        (`process_cv_extraction`) — peut prendre plusieurs minutes.
     """
+    # Compte candidat : créé automatiquement si l'e-mail est nouveau, sinon le
+    # mot de passe doit correspondre (lève 401 / 422 / 429 sinon).
+    authenticate_or_create(db, email, mot_de_passe, "candidat")
+    email = normalize_email(email)
+
     if not file.filename:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Aucun nom de fichier fourni.")
 
@@ -362,6 +378,7 @@ async def submit_mission(
     societe: str = Form(...),
     nom: str = Form(""),
     email: str = Form(...),
+    mot_de_passe: str = Form(...),
     engagement: str = Form(""),
     expertise: str = Form(...),
     demarrage: str = Form(""),
@@ -377,6 +394,10 @@ async def submit_mission(
     lancé manuellement par un administrateur depuis le back-office, via
     POST /api/v1/admin/missions/{id}/lancer-matching.
     """
+    # Compte recruteur : créé automatiquement ou mot de passe vérifié.
+    authenticate_or_create(db, email, mot_de_passe, "recruteur")
+    email = normalize_email(email)
+
     if not mission_file.filename:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Aucun nom de fichier fourni pour le descriptif de mission.")
 

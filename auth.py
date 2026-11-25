@@ -201,6 +201,14 @@ def authenticate_or_create(db: Session, email: str, password: str, role: str) ->
     compte = db.query(Compte).filter(Compte.email == email, Compte.role == role).first()
 
     if compte is None:
+        # Une adresse e-mail = un seul type de compte (candidat OU recruteur).
+        autre = db.query(Compte).filter(Compte.email == email, Compte.role != role).first()
+        if autre is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Cette adresse e-mail est déjà utilisée pour un compte {autre.role}. "
+                       "Utilisez une autre adresse e-mail pour ce type de compte.",
+            )
         if len(password or "") < MIN_PASSWORD_LENGTH:
             raise HTTPException(
                 status_code=422,
@@ -278,6 +286,13 @@ def login(
     _check_not_locked(key)
 
     compte = db.query(Compte).filter(Compte.email == email_n, Compte.role == role).first()
+    if compte is None:
+        autre = db.query(Compte).filter(Compte.email == email_n, Compte.role != role).first()
+        if autre is not None and verify_password(mot_de_passe, autre.mot_de_passe_hash):
+            raise HTTPException(
+                status_code=401,
+                detail=f"Cette adresse est associée à un compte {autre.role} : choisissez « {autre.role.capitalize()} » pour vous connecter.",
+            )
     if compte is None or not verify_password(mot_de_passe, compte.mot_de_passe_hash):
         _register_failure(key)
         raise HTTPException(status_code=401, detail="E-mail ou mot de passe incorrect.")
